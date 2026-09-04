@@ -1,0 +1,823 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Portal Job API",
+    "description": "Foundation (Phase 0): auth + jobs example domain.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth"
+    },
+    {
+      "name": "jobs"
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "profile"
+    },
+    {
+      "name": "skill"
+    },
+    {
+      "name": "portfolio"
+    },
+    {
+      "name": "application"
+    },
+    {
+      "name": "report"
+    },
+    {
+      "name": "admin"
+    }
+  ],
+  "paths": {
+    "/api/v1/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "created"
+          },
+          "400": {
+            "description": "validation error"
+          },
+          "409": {
+            "description": "email already registered"
+          }
+        }
+      }
+    },
+    "/api/v1/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login and receive a JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "login success"
+          },
+          "401": {
+            "description": "invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/v1/jobs": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List published jobs (public)",
+        "parameters": [
+          {
+            "name": "lokasi",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of jobs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Create a job (company only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "created"
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "403": {
+            "description": "forbidden (not a company)"
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{id}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get job detail (public)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "job detail"
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/api/v1/company/profile": {
+      "get": {
+        "summary": "Get my company profile",
+        "tags": [
+          "company"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Create/Update my company profile",
+        "tags": [
+          "company"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/profile": {
+      "get": {
+        "summary": "Get my jobseeker profile",
+        "tags": [
+          "profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Create/Update my jobseeker profile",
+        "tags": [
+          "profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/skills": {
+      "get": {
+        "summary": "List my skills",
+        "tags": [
+          "skill"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add a skill",
+        "tags": [
+          "skill"
+        ],
+        "responses": {
+          "201": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/skills/{id}": {
+      "delete": {
+        "summary": "Delete a skill (owner only)",
+        "tags": [
+          "skill"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "403": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/me/portfolios": {
+      "get": {
+        "summary": "List my portfolios",
+        "tags": [
+          "portfolio"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add a portfolio",
+        "tags": [
+          "portfolio"
+        ],
+        "responses": {
+          "201": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/portfolios/{id}": {
+      "delete": {
+        "summary": "Delete a portfolio (owner only)",
+        "tags": [
+          "portfolio"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "403": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/jobs/{id}/apply": {
+      "post": {
+        "summary": "Apply to a job (jobseeker)",
+        "tags": [
+          "application"
+        ],
+        "responses": {
+          "201": {
+            "description": "ok"
+          },
+          "403": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          },
+          "409": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/me/applications": {
+      "get": {
+        "summary": "List my applications (jobseeker)",
+        "tags": [
+          "application"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/jobs/{id}/applications": {
+      "get": {
+        "summary": "List applicants for my job (company owner)",
+        "tags": [
+          "application"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "403": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/applications/{id}": {
+      "patch": {
+        "summary": "Decide an application: interview/accepted/declined (company owner)",
+        "tags": [
+          "application"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          },
+          "403": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports": {
+      "post": {
+        "summary": "File a report (any authenticated user)",
+        "tags": [
+          "report"
+        ],
+        "responses": {
+          "201": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "summary": "List all users (admin)",
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/suspend": {
+      "patch": {
+        "summary": "Suspend a user (admin)",
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/reports": {
+      "get": {
+        "summary": "List all reports (admin)",
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/reports/{id}": {
+      "patch": {
+        "summary": "Resolve a report valid/invalid (admin)",
+        "tags": [
+          "admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "required": [
+          "nama",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "nama": {
+            "type": "string",
+            "example": "Budi"
+          },
+          "email": {
+            "type": "string",
+            "example": "budi@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "secret123"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "jobseeker",
+              "company",
+              "admin"
+            ],
+            "example": "company"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "budi@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "secret123"
+          }
+        }
+      },
+      "CreateJobRequest": {
+        "type": "object",
+        "required": [
+          "judul",
+          "lokasi"
+        ],
+        "properties": {
+          "judul": {
+            "type": "string",
+            "example": "Backend Engineer"
+          },
+          "deskripsi": {
+            "type": "string",
+            "example": "Go + Postgres"
+          },
+          "lokasi": {
+            "type": "string",
+            "example": "Jakarta"
+          },
+          "gaji": {
+            "type": "integer",
+            "example": 12000000
+          }
+        }
+      }
+    }
+  }
+}
