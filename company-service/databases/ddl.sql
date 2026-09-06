@@ -1,0 +1,12 @@
+CREATE TABLE companies (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    name VARCHAR(150) NOT NULL,
+    field_of VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+select * from companies;

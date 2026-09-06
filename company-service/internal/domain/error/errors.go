@@ -3,7 +3,7 @@ package errors
 import "errors"
 
 var (
-	ErrNotFound  = errors.New("record not found")
+	ErrNotFound  = errors.New("company not found")
+	ErrConflict  = errors.New("company already exists")
 	ErrForbidden = errors.New("forbidden")
-	ErrConflict  = errors.New("already exists / duplicate")
 )

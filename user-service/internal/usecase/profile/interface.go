@@ -8,20 +8,7 @@ import (
 )
 
 type ProfileUsecase interface {
-	Create(
-		ctx context.Context,
-		userID uint,
-		req request.CreateProfileRequest,
-	) (*response.ProfileResponse, error)
-
-	GetByUserID(
-		ctx context.Context,
-		userID uint,
-	) (*response.ProfileResponse, error)
-
-	Update(
-		ctx context.Context,
-		userID uint,
-		req request.UpdateProfileRequest,
-	) (*response.ProfileResponse, error)
+	Create(ctx context.Context, userID uint, req request.CreateProfileRequest) (*response.ProfileResponse, error)
+	GetByUserID(ctx context.Context, userID uint) (*response.ProfileResponse, error)
+	Update(ctx context.Context, userID uint, req request.UpdateProfileRequest) (*response.ProfileResponse, error)
 }
