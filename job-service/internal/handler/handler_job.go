@@ -62,6 +62,16 @@ func (h *JobHandler) Create(c *echo.Context) error {
 // GetAll mengambil semua lowongan.
 // GET /jobs
 func (h *JobHandler) GetAll(c *echo.Context) error {
+
+	userID, err := getUserID(c)
+	if err != nil {
+		return err
+	}
+
+	// userID digunakan untuk memastikan user sudah login.
+	// Semua user yang memiliki JWT dapat melihat job published.
+	_ = userID
+
 	jobs, err := h.jobUsecase.GetAll(
 		c.Request().Context(),
 	)
@@ -72,12 +82,15 @@ func (h *JobHandler) GetAll(c *echo.Context) error {
 	data := make([]response.JobResponse, 0, len(jobs))
 
 	for _, job := range jobs {
-		data = append(data, response.FromEntity(job))
+		data = append(
+			data,
+			response.FromEntity(job),
+		)
 	}
 
 	return c.JSON(http.StatusOK, helper.Response{
 		ResponseCode:    http.StatusOK,
-		ResponseMessage: "success",
+		ResponseMessage: "published jobs retrieved successfully",
 		ResponseData:    data,
 	})
 }

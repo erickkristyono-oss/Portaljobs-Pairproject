@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"job-service/internal/domain/constant"
 	"job-service/internal/domain/entity"
 	domainerrors "job-service/internal/domain/error"
 	"job-service/internal/domain/repository"
@@ -96,6 +97,35 @@ func (r *jobRepository) FindAll(ctx context.Context) ([]*entity.Job, error) {
 
 	for i := range jobModels {
 		jobs = append(jobs, mapper.ToJobEntity(&jobModels[i]))
+	}
+
+	return jobs, nil
+}
+
+func (r *jobRepository) FindPublished(ctx context.Context) ([]*entity.Job, error) {
+
+	var models []model.JobModel
+
+	err := r.db.WithContext(ctx).
+		Where("status = ?", constant.JobPublished).
+		Order("created_at DESC").
+		Find(&models).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	jobs := make(
+		[]*entity.Job,
+		0,
+		len(models),
+	)
+
+	for _, jobModel := range models {
+		jobs = append(
+			jobs,
+			mapper.ToJobEntity(&jobModel),
+		)
 	}
 
 	return jobs, nil

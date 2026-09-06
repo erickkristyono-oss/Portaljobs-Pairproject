@@ -10,25 +10,16 @@ import (
 func SetupRouter(
 	e *echo.Echo,
 	jobHandler *handler.JobHandler,
-	jwtSecret string,
 ) {
-	// Public routes
+	// Semua user yang sudah login
+	// dapat melihat job yang published.
+	e.GET("/jobs", jobHandler.GetAll, middleware.JWTMiddleware)
+	e.GET("/jobs/:id", jobHandler.GetByID, middleware.JWTMiddleware)
 
-	// Semua user dapat melihat daftar job.
-	e.GET("/jobs", jobHandler.GetAll)
-	e.GET("/jobs/:id", jobHandler.GetByID)
-
-	// Company routes
-
-	company := e.Group(
-		"",
-		middleware.AuthMiddleware(jwtSecret),
-		middleware.RequireRole("company"),
-	)
-
-	company.POST("/jobs", jobHandler.Create)
-	company.PUT("/jobs/:id", jobHandler.Update)
-	company.DELETE("/jobs/:id", jobHandler.Delete)
-	company.PATCH("/jobs/:id/publish", jobHandler.Publish)
-	company.PATCH("/jobs/:id/close", jobHandler.Close)
+	//khusus company.
+	e.POST("/jobs", jobHandler.Create, middleware.JWTMiddleware, middleware.RequireRole("company"))
+	e.PUT("/jobs/:id", jobHandler.Update, middleware.JWTMiddleware, middleware.RequireRole("company"))
+	e.DELETE("/jobs/:id", jobHandler.Delete, middleware.JWTMiddleware, middleware.RequireRole("company"))
+	e.PATCH("/jobs/:id/publish", jobHandler.Publish, middleware.JWTMiddleware, middleware.RequireRole("company"))
+	e.PATCH("/jobs/:id/close", jobHandler.Close, middleware.JWTMiddleware, middleware.RequireRole("company"))
 }

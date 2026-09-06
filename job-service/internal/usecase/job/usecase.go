@@ -59,7 +59,7 @@ func (u *jobUsecase) GetByID(ctx context.Context, id uint) (*entity.Job, error) 
 
 func (u *jobUsecase) GetAll(ctx context.Context) ([]*entity.Job, error) {
 
-	return u.jobRepository.FindAll(ctx)
+	return u.jobRepository.FindPublished(ctx)
 }
 
 func (u *jobUsecase) GetByCompanyID(ctx context.Context, userID uint) ([]*entity.Job, error) {

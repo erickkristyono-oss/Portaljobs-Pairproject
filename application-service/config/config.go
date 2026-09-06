@@ -9,6 +9,7 @@ import (
 )
 
 func ConnectDatabase() (*gorm.DB, error) {
+
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
@@ -30,7 +31,6 @@ func ConnectDatabase() (*gorm.DB, error) {
 		postgres.Open(dsn),
 		&gorm.Config{},
 	)
-
 	if err != nil {
 		return nil, err
 	}
