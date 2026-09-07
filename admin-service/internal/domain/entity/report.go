@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"admin-service/internal/domain/constant"
-
 	"time"
+
+	"admin-service/internal/domain/constant"
 )
 
 type Report struct {

@@ -3,14 +3,14 @@ package model
 import "time"
 
 type ReportModel struct {
-	ID         uint   `gorm:"primaryKey"`
-	ReporterID uint   `gorm:"index;not null"`
-	TargetType string `gorm:"type:varchar(20);not null"`
-	TargetID   uint   `gorm:"index;not null"`
-	Reason     string `gorm:"not null"`
-	Status     string `gorm:"type:varchar(20);default:'open';not null"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         uint      `gorm:"primaryKey"`
+	ReporterID uint      `gorm:"not null;index"`
+	TargetType string    `gorm:"type:varchar(20);not null;index"`
+	TargetID   uint      `gorm:"not null;index"`
+	Reason     string    `gorm:"type:text;not null"`
+	Status     string    `gorm:"type:varchar(20);not null;index"`
+	CreatedAt  time.Time `gorm:"not null"`
+	UpdatedAt  time.Time `gorm:"not null"`
 }
 
 func (ReportModel) TableName() string {
