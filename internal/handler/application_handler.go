@@ -11,28 +11,52 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ApplicationHandler struct{ apps *usecase.ApplicationUsecase }
-
-func NewApplicationHandler(apps *usecase.ApplicationUsecase) *ApplicationHandler {
-	return &ApplicationHandler{apps: apps}
+type ApplicationHandler struct {
+	apps  *usecase.ApplicationUsecase
+	match *usecase.MatchUsecase
 }
 
-// Apply — POST /api/v1/jobs/:id/apply (jobseeker).
+func NewApplicationHandler(apps *usecase.ApplicationUsecase, match *usecase.MatchUsecase) *ApplicationHandler {
+	return &ApplicationHandler{apps: apps, match: match}
+}
+
+// Apply — POST /api/v1/jobs/:id/apply (jobseeker). Response includes a
+// non-blocking skill-match summary (warning if fit is low).
 func (h *ApplicationHandler) Apply(c *gin.Context) {
 	jobID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		response.Error(c, http.StatusBadRequest, "invalid job id")
 		return
 	}
-	app, err := h.apps.Apply(c.Request.Context(), middleware.UserID(c), uint(jobID))
+	userID := middleware.UserID(c)
+	app, err := h.apps.Apply(c.Request.Context(), userID, uint(jobID))
 	if err != nil {
 		fail(c, err)
 		return
 	}
-	response.OK(c, http.StatusCreated, "application submitted", app)
+	// best-effort: attach match info; never fail the apply if match errors
+	match, _ := h.match.Match(c.Request.Context(), userID, uint(jobID))
+	response.OK(c, http.StatusCreated, "application submitted", gin.H{
+		"application": app,
+		"match":       match,
+	})
 }
 
-// ListMine — GET /api/v1/me/applications (jobseeker).
+// JobMatch — GET /api/v1/jobs/:id/match (jobseeker): fit before applying.
+func (h *ApplicationHandler) JobMatch(c *gin.Context) {
+	jobID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "invalid job id")
+		return
+	}
+	res, err := h.match.Match(c.Request.Context(), middleware.UserID(c), uint(jobID))
+	if err != nil {
+		fail(c, err)
+		return
+	}
+	response.OK(c, http.StatusOK, "match result", res)
+}
+
 func (h *ApplicationHandler) ListMine(c *gin.Context) {
 	apps, err := h.apps.ListMine(c.Request.Context(), middleware.UserID(c))
 	if err != nil {
@@ -42,7 +66,6 @@ func (h *ApplicationHandler) ListMine(c *gin.Context) {
 	response.OK(c, http.StatusOK, "my applications", apps)
 }
 
-// ListApplicants — GET /api/v1/jobs/:id/applications (company owner).
 func (h *ApplicationHandler) ListApplicants(c *gin.Context) {
 	jobID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -57,7 +80,6 @@ func (h *ApplicationHandler) ListApplicants(c *gin.Context) {
 	response.OK(c, http.StatusOK, "applicants", apps)
 }
 
-// Decide — PATCH /api/v1/applications/:id (company owner).
 func (h *ApplicationHandler) Decide(c *gin.Context) {
 	appID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 	"portaljob/internal/domain"
 )
 
-// --- hand-written mocks (no DB, no real WA) --
+// --- hand-written mocks (no DB, no real WA) ---
 
 type mockAppRepo struct {
 	created  []*domain.Application

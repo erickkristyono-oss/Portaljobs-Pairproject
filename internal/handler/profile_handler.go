@@ -27,6 +27,7 @@ func (h *ProfileHandler) Save(c *gin.Context) {
 		Name: req.Name, PhoneNumber: req.PhoneNumber, Address: req.Address,
 		Faculty: req.Faculty, Major: req.Major, EducationLevel: req.EducationLevel,
 		Started: req.Started, Graduated: req.Graduated,
+		CVURL: req.CVURL, PortfolioURL: req.PortfolioURL,
 	}
 	saved, err := h.profiles.Save(c.Request.Context(), middleware.UserID(c), p)
 	if err != nil {

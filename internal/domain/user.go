@@ -27,7 +27,7 @@ const (
 )
 
 // User is a pure entity. json:"-" on Password ensures the hash is never
-// serialized in any API response
+// serialized in any API response.
 type User struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	Nama      string    `gorm:"not null" json:"nama"`

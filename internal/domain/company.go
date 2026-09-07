@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Company is the company profile, linked 1-1 to a user whose role is "company"
+// Company is the company profile, linked 1-1 to a user whose role is "company".
 type Company struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	UserID      uint      `gorm:"uniqueIndex;not null" json:"user_id"`

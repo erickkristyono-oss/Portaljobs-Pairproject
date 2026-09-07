@@ -43,6 +43,7 @@ func main() {
 	jobRepo := postgres.NewJobRepository(db)
 	appRepo := postgres.NewApplicationRepository(db)
 	reportRepo := postgres.NewReportRepository(db)
+	skillTagRepo := postgres.NewSkillTagRepository(db)
 
 	// usecases
 	authUC := usecase.NewAuthUsecase(userRepo, jwtManager)
@@ -50,10 +51,12 @@ func main() {
 	profileUC := usecase.NewProfileUsecase(profileRepo)
 	skillUC := usecase.NewSkillUsecase(skillRepo)
 	portfolioUC := usecase.NewPortfolioUsecase(portfolioRepo)
-	jobUC := usecase.NewJobUsecase(jobRepo, companyRepo)
+	jobUC := usecase.NewJobUsecase(jobRepo, companyRepo, skillTagRepo)
 	appUC := usecase.NewApplicationUsecase(appRepo, jobRepo, companyRepo, profileRepo, notifier)
 	reportUC := usecase.NewReportUsecase(reportRepo)
 	adminUC := usecase.NewAdminUsecase(userRepo, reportRepo)
+	skillTagUC := usecase.NewSkillTagUsecase(skillTagRepo)
+	matchUC := usecase.NewMatchUsecase(skillTagRepo)
 
 	// handlers
 	handlers := router.Handlers{
@@ -63,9 +66,10 @@ func main() {
 		Profile:     handler.NewProfileHandler(profileUC),
 		Skill:       handler.NewSkillHandler(skillUC),
 		Portfolio:   handler.NewPortfolioHandler(portfolioUC),
-		Application: handler.NewApplicationHandler(appUC),
+		Application: handler.NewApplicationHandler(appUC, matchUC),
 		Report:      handler.NewReportHandler(reportUC),
 		Admin:       handler.NewAdminHandler(adminUC),
+		SkillTag:    handler.NewSkillTagHandler(skillTagUC),
 	}
 
 	r := router.New(handlers, jwtManager, cfg)

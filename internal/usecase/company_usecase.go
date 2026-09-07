@@ -12,7 +12,7 @@ func NewCompanyUsecase(companies domain.CompanyRepository) *CompanyUsecase {
 	return &CompanyUsecase{companies: companies}
 }
 
-// Save creates the company profile on first call, updates it afterwards
+// Save creates the company profile on first call, updates it afterwards.
 func (u *CompanyUsecase) Save(ctx context.Context, userID uint, name, fieldOf, address, description string) (*domain.Company, error) {
 	existing, err := u.companies.FindByUserID(ctx, userID)
 	if err != nil && err != domain.ErrNotFound {

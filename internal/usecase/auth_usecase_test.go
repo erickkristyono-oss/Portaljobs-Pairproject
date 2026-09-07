@@ -11,7 +11,7 @@ import (
 )
 
 // mockUserRepo is a hand-written mock of domain.UserRepository. It lets us test
-// the usecase without a real database — this is the "mocking" the rubric asks for
+// the usecase without a real database — this is the "mocking" the rubric asks for.
 type mockUserRepo struct {
 	users  map[string]*domain.User
 	nextID uint
@@ -42,6 +42,24 @@ func (m *mockUserRepo) FindByID(ctx context.Context, id uint) (*domain.User, err
 		}
 	}
 	return nil, domain.ErrNotFound
+}
+
+func (m *mockUserRepo) UpdateStatus(ctx context.Context, id uint, status string) error {
+	for _, u := range m.users {
+		if u.ID == id {
+			u.Status = status
+			return nil
+		}
+	}
+	return domain.ErrNotFound
+}
+
+func (m *mockUserRepo) FindAll(ctx context.Context) ([]domain.User, error) {
+	out := make([]domain.User, 0, len(m.users))
+	for _, u := range m.users {
+		out = append(out, *u)
+	}
+	return out, nil
 }
 
 func TestRegister_HashesPassword(t *testing.T) {

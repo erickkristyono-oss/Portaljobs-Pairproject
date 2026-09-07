@@ -20,7 +20,7 @@ func ValidAppStatus(s string) bool {
 	return false
 }
 
-// Application is a jobseeker's application to a job (1 user - many applications)
+// Application is a jobseeker's application to a job (1 user - many applications).
 type Application struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	UserID    uint      `gorm:"index;not null" json:"user_id"`

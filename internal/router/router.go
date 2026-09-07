@@ -22,6 +22,7 @@ type Handlers struct {
 	Application *handler.ApplicationHandler
 	Report      *handler.ReportHandler
 	Admin       *handler.AdminHandler
+	SkillTag    *handler.SkillTagHandler
 }
 
 func New(h Handlers, jwtManager *jwt.Manager, cfg *config.Config) *gin.Engine {
@@ -43,6 +44,7 @@ func New(h Handlers, jwtManager *jwt.Manager, cfg *config.Config) *gin.Engine {
 	api.POST("/login", h.Auth.Login)
 	api.GET("/jobs", h.Job.List)
 	api.GET("/jobs/:id", h.Job.Detail)
+	api.GET("/skill-tags", h.SkillTag.ListVocab)
 
 	// authenticated (any role)
 	authed := api.Group("")
@@ -63,6 +65,9 @@ func New(h Handlers, jwtManager *jwt.Manager, cfg *config.Config) *gin.Engine {
 		js.DELETE("/me/portfolios/:id", h.Portfolio.Delete)
 		js.POST("/jobs/:id/apply", h.Application.Apply)
 		js.GET("/me/applications", h.Application.ListMine)
+		js.GET("/me/skill-tags", h.SkillTag.GetMine)
+		js.PUT("/me/skill-tags", h.SkillTag.SetMine)
+		js.GET("/jobs/:id/match", h.Application.JobMatch)
 	}
 
 	// company only

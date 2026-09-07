@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Portfolio is a project entry owned by a user (1-M)
+// Portfolio is a project entry owned by a user (1-M).
 type Portfolio struct {
 	ID           uint      `gorm:"primaryKey" json:"id"`
 	UserID       uint      `gorm:"index;not null" json:"user_id"`

@@ -13,12 +13,13 @@ type LoginRequest struct {
 }
 
 type CreateJobRequest struct {
-	Judul            string `json:"judul" binding:"required"`
-	AboutRole        string `json:"about_role"`
-	Responsibilities string `json:"responsibilities"`
-	Deskripsi        string `json:"deskripsi"`
-	Lokasi           string `json:"lokasi" binding:"required"`
-	Gaji             int64  `json:"gaji"`
+	Judul            string   `json:"judul" binding:"required"`
+	AboutRole        string   `json:"about_role"`
+	Responsibilities string   `json:"responsibilities"`
+	Deskripsi        string   `json:"deskripsi"`
+	Lokasi           string   `json:"lokasi" binding:"required"`
+	Gaji             int64    `json:"gaji"`
+	RequiredSkills   []string `json:"required_skills"`
 }
 
 type CompanyRequest struct {
@@ -37,6 +38,8 @@ type ProfileRequest struct {
 	EducationLevel string `json:"education_level"`
 	Started        int    `json:"started"`
 	Graduated      int    `json:"graduated"`
+	CVURL          string `json:"cv_url" binding:"omitempty,url"`
+	PortfolioURL   string `json:"portfolio_url" binding:"omitempty,url"`
 }
 
 type SkillRequest struct {
@@ -66,4 +69,8 @@ type ReportRequest struct {
 
 type ResolveReportRequest struct {
 	Valid bool `json:"valid"`
+}
+
+type SkillTagsRequest struct {
+	Skills []string `json:"skills" binding:"required"`
 }

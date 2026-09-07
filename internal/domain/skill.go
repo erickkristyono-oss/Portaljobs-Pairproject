@@ -21,7 +21,7 @@ func (l SkillLevel) Valid() bool {
 	return false
 }
 
-// Skill is a certificate/skill owned by a user (1-M)
+// Skill is a certificate/skill owned by a user (1-M).
 type Skill struct {
 	ID           uint       `gorm:"primaryKey" json:"id"`
 	UserID       uint       `gorm:"index;not null" json:"user_id"`

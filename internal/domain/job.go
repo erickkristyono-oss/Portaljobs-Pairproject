@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Job is posted by a company. CompanyID references companies.id
+// Job is posted by a company. CompanyID references companies.id.
 type Job struct {
 	ID               uint      `gorm:"primaryKey" json:"id"`
 	CompanyID        uint      `gorm:"index;not null" json:"company_id"`

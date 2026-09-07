@@ -38,6 +38,9 @@
     },
     {
       "name": "admin"
+    },
+    {
+      "name": "skill-tag"
     }
   ],
   "paths": {
@@ -731,6 +734,97 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/skill-tags": {
+      "get": {
+        "summary": "List shared skill-tag vocabulary",
+        "tags": [
+          "skill-tag"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/api/v1/me/skill-tags": {
+      "get": {
+        "summary": "Get my skill tags (jobseeker)",
+        "tags": [
+          "skill-tag"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Replace my skill tags by names (jobseeker)",
+        "tags": [
+          "skill-tag"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{id}/match": {
+      "get": {
+        "summary": "Skill-match score for a job (jobseeker)",
+        "tags": [
+          "application"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "404": {
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
       }
     }
   },

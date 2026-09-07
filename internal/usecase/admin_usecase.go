@@ -31,7 +31,7 @@ func (u *AdminUsecase) ListReports(ctx context.Context) ([]domain.Report, error)
 }
 
 // ResolveReport marks a report valid or invalid. When valid and the target is a
-// user, that user is suspended
+// user, that user is suspended.
 func (u *AdminUsecase) ResolveReport(ctx context.Context, reportID uint, valid bool) (*domain.Report, error) {
 	report, err := u.reports.FindByID(ctx, reportID)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Profile is the jobseeker profile, linked 1-1 to a user
+// Profile is the jobseeker profile, linked 1-1 to a user.
 type Profile struct {
 	ID             uint      `gorm:"primaryKey" json:"id"`
 	UserID         uint      `gorm:"uniqueIndex;not null" json:"user_id"`
@@ -17,6 +17,8 @@ type Profile struct {
 	EducationLevel string    `json:"education_level"`
 	Started        int       `json:"started"`
 	Graduated      int       `json:"graduated"`
+	CVURL          string    `json:"cv_url"`
+	PortfolioURL   string    `json:"portfolio_url"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

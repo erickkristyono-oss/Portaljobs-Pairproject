@@ -22,7 +22,7 @@ func (h *JobHandler) Create(c *gin.Context) {
 		return
 	}
 	job, err := h.jobs.Create(c.Request.Context(), middleware.UserID(c),
-		req.Judul, req.AboutRole, req.Responsibilities, req.Deskripsi, req.Lokasi, req.Gaji)
+		req.Judul, req.AboutRole, req.Responsibilities, req.Deskripsi, req.Lokasi, req.Gaji, req.RequiredSkills)
 	if err != nil {
 		fail(c, err)
 		return

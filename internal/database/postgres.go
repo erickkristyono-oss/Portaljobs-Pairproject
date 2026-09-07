@@ -34,6 +34,9 @@ func NewPostgres(cfg *config.Config) (*gorm.DB, error) {
 		&domain.Job{},
 		&domain.Application{},
 		&domain.Report{},
+		&domain.SkillTag{},
+		&domain.UserSkillTag{},
+		&domain.JobSkillTag{},
 	); err != nil {
 		return nil, fmt.Errorf("auto migrate: %w", err)
 	}

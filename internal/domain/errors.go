@@ -3,7 +3,7 @@ package domain
 import "errors"
 
 // Sentinel errors so the usecase layer can signal outcomes without knowing
-// about HTTP; handlers map these to the right status codes
+// about HTTP; handlers map these to the right status codes.
 var (
 	ErrNotFound          = errors.New("record not found")
 	ErrEmailTaken        = errors.New("email already registered")

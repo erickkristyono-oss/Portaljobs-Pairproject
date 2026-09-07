@@ -9,15 +9,14 @@ import (
 type JobUsecase struct {
 	jobs      domain.JobRepository
 	companies domain.CompanyRepository
+	tags      domain.SkillTagRepository
 }
 
-func NewJobUsecase(jobs domain.JobRepository, companies domain.CompanyRepository) *JobUsecase {
-	return &JobUsecase{jobs: jobs, companies: companies}
+func NewJobUsecase(jobs domain.JobRepository, companies domain.CompanyRepository, tags domain.SkillTagRepository) *JobUsecase {
+	return &JobUsecase{jobs: jobs, companies: companies, tags: tags}
 }
 
-// Create posts a job for the company that owns userID. The company profile must
-// exist first (so job.company_id references a real companies.id).
-func (u *JobUsecase) Create(ctx context.Context, userID uint, judul, aboutRole, responsibilities, deskripsi, lokasi string, gaji int64) (*domain.Job, error) {
+func (u *JobUsecase) Create(ctx context.Context, userID uint, judul, aboutRole, responsibilities, deskripsi, lokasi string, gaji int64, requiredSkills []string) (*domain.Job, error) {
 	company, err := u.companies.FindByUserID(ctx, userID)
 	if err == domain.ErrNotFound {
 		return nil, domain.ErrNoCompanyProfile
@@ -38,6 +37,15 @@ func (u *JobUsecase) Create(ctx context.Context, userID uint, judul, aboutRole, 
 	if err := u.jobs.Create(ctx, job); err != nil {
 		return nil, err
 	}
+	if len(requiredSkills) > 0 {
+		ids, err := resolveTagIDs(ctx, u.tags, requiredSkills)
+		if err != nil {
+			return nil, err
+		}
+		if err := u.tags.SetJobTags(ctx, job.ID, ids); err != nil {
+			return nil, err
+		}
+	}
 	return job, nil
 }
 
@@ -49,7 +57,6 @@ func (u *JobUsecase) Detail(ctx context.Context, id uint) (*domain.Job, error) {
 	return u.jobs.FindByID(ctx, id)
 }
 
-// ListMine returns jobs posted by the company that owns userID.
 func (u *JobUsecase) ListMine(ctx context.Context, userID uint) ([]domain.Job, error) {
 	company, err := u.companies.FindByUserID(ctx, userID)
 	if err == domain.ErrNotFound {

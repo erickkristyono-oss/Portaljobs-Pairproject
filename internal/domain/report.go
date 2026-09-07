@@ -12,7 +12,7 @@ const (
 	ReportClosed  = "closed"
 )
 
-// Report is filed by a user against a target (user/company/job)
+// Report is filed by a user against a target (user/company/job).
 type Report struct {
 	ID         uint      `gorm:"primaryKey" json:"id"`
 	ReporterID uint      `gorm:"index;not null" json:"reporter_id"`

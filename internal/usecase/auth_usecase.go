@@ -57,7 +57,7 @@ func (u *AuthUsecase) Login(ctx context.Context, email, password string) (string
 	if err != nil {
 		return "", nil, err
 	}
-	// security: block suspended accounts from logging in 
+	// security: block suspended accounts from logging in
 	if user.Status == domain.StatusSuspended {
 		return "", nil, domain.ErrSuspended
 	}
