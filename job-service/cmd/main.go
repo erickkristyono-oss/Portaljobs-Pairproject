@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"job-service/config"
-	"job-service/internal/client"
 	"job-service/internal/handler"
 	"job-service/internal/repository/postgres"
 	"job-service/internal/router"
@@ -22,35 +21,30 @@ func main() {
 		log.Println("warning: .env file not found")
 	}
 
-	// Connect database
+	// Connect Database
 	db, err := config.ConnectDatabase()
 	if err != nil {
 		log.Fatal("failed to connect database:", err)
 	}
 
 	// Repository
+
+	// Repository untuk jobs
 	jobRepository := postgres.NewJobRepository(db)
 
-	// Company client
-	companyClient := client.NewCompanyClient(
-		"http://localhost:8081",
-	)
+	// Repository untuk required skills
+	jobRequiredSkillRepository := postgres.NewJobRequiredSkillRepository(db)
 
 	// Usecase
-	jobUsecase := job.NewJobUsecase(
-		jobRepository,
-		companyClient,
-	)
+	jobUsecase := job.NewJobUsecase(jobRepository, jobRequiredSkillRepository)
 
 	// Handler
-	jobHandler := handler.NewJobHandler(
-		jobUsecase,
-	)
+	jobHandler := handler.NewJobHandler(jobUsecase)
 
 	// Echo
 	e := echo.New()
 
-	// Global middleware
+	// Global Middleware
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Recover())
 
@@ -60,10 +54,10 @@ func main() {
 		jobHandler,
 	)
 
-	// Start server
+	// Start Server
 	log.Println("job-service running on http://localhost:8082")
 
 	if err := e.Start(":8082"); err != nil {
-		log.Fatal(err)
+		log.Fatal("failed to start job-service:", err)
 	}
 }

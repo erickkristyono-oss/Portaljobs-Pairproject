@@ -32,6 +32,7 @@ func (u *skillUsecase) Create(ctx context.Context, userID uint, req request.Crea
 	skill := &entity.Skill{
 		UserID:       userID,
 		NameLicense:  req.NameLicense,
+		SkillTag:     req.SkillTag,
 		Level:        level,
 		Organization: req.Organization,
 		Grade:        req.Grade,
@@ -81,6 +82,7 @@ func toSkillResponse(skill *entity.Skill) *response.SkillResponse {
 		ID:           skill.ID,
 		UserID:       skill.UserID,
 		NameLicense:  skill.NameLicense,
+		SkillTag:     skill.SkillTag,
 		Level:        string(skill.Level),
 		Organization: skill.Organization,
 		Grade:        skill.Grade,

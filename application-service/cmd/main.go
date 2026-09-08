@@ -12,6 +12,7 @@ import (
 	"application-service/internal/helper"
 	"application-service/internal/repository/postgres"
 	"application-service/internal/router"
+	"application-service/internal/skilltag"
 	application "application-service/internal/usecase/app"
 )
 
@@ -33,7 +34,12 @@ func main() {
 	// Repository
 	applicationRepository := postgres.NewApplicationRepository(db)
 
-	// Service clients
+	// Service Clients
+
+	userClient := client.NewUserClient(
+		"http://localhost:8080",
+	)
+
 	jobClient := client.NewJobClient(
 		"http://localhost:8082",
 	)
@@ -42,13 +48,26 @@ func main() {
 		"http://localhost:8081",
 	)
 
-	// Usecase
-	applicationUsecase := application.NewApplicationUsecase(applicationRepository, jobClient, companyClient)
+	// Skill Tag Usecase
+
+	skillTagUsecase := skilltag.NewSkillTagUsecase()
+
+	// Application Usecase
+
+	applicationUsecase := application.NewApplicationUsecase(
+		applicationRepository,
+		jobClient,
+		userClient,
+		companyClient,
+		skillTagUsecase,
+	)
 
 	// Handler
+
 	applicationHandler := handler.NewApplicationHandler(applicationUsecase)
 
 	// Echo
+
 	e := echo.New()
 
 	// Validator
@@ -60,12 +79,12 @@ func main() {
 		applicationHandler,
 	)
 
-	// Application Service Port
+	// Start Server
+
 	port := "8083"
 
 	log.Println("application-service running on port", port)
 
-	// Start server
 	if err := e.Start(":" + port); err != nil {
 		log.Fatal(err)
 	}

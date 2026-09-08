@@ -7,17 +7,18 @@ import (
 )
 
 type JobResponse struct {
-	ID               uint      `json:"id"`
-	CompanyID        uint      `json:"company_id"`
-	Judul            string    `json:"judul"`
-	AboutRole        string    `json:"about_role"`
-	Responsibilities string    `json:"responsibilities"`
-	Deskripsi        string    `json:"deskripsi"`
-	Lokasi           string    `json:"lokasi"`
-	Gaji             int64     `json:"gaji"`
-	Status           string    `json:"status"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID               uint                       `json:"id"`
+	CompanyID        uint                       `json:"company_id"`
+	Judul            string                     `json:"judul"`
+	AboutRole        string                     `json:"about_role"`
+	Responsibilities string                     `json:"responsibilities"`
+	Deskripsi        string                     `json:"deskripsi"`
+	Lokasi           string                     `json:"lokasi"`
+	Gaji             int64                      `json:"gaji"`
+	Status           string                     `json:"status"`
+	RequiredSkills   []JobRequiredSkillResponse `json:"required_skills"`
+	CreatedAt        time.Time                  `json:"created_at"`
+	UpdatedAt        time.Time                  `json:"updated_at"`
 }
 
 func FromEntity(job *entity.Job) JobResponse {

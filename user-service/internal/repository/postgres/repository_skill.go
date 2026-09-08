@@ -38,10 +38,7 @@ func (r *skillRepository) Create(
 	return nil
 }
 
-func (r *skillRepository) FindByUserID(
-	ctx context.Context,
-	userID uint,
-) ([]entity.Skill, error) {
+func (r *skillRepository) FindByUserID(ctx context.Context, userID uint) ([]entity.Skill, error) {
 	var skillModels []model.SkillModel
 
 	if err := r.db.WithContext(ctx).
@@ -64,10 +61,7 @@ func (r *skillRepository) FindByUserID(
 	return skills, nil
 }
 
-func (r *skillRepository) FindByID(
-	ctx context.Context,
-	id uint,
-) (*entity.Skill, error) {
+func (r *skillRepository) FindByID(ctx context.Context, id uint) (*entity.Skill, error) {
 	var skillModel model.SkillModel
 
 	err := r.db.WithContext(ctx).
@@ -81,10 +75,7 @@ func (r *skillRepository) FindByID(
 	return mapper.SkillModelToEntity(&skillModel), nil
 }
 
-func (r *skillRepository) Delete(
-	ctx context.Context,
-	id uint,
-) error {
+func (r *skillRepository) Delete(ctx context.Context, id uint) error {
 	result := r.db.WithContext(ctx).
 		Delete(&model.SkillModel{}, id)
 

@@ -11,23 +11,30 @@ import (
 	domainerrors "application-service/internal/domain/error"
 	"application-service/internal/domain/repository"
 	"application-service/internal/dto/request"
+	"application-service/internal/skilltag"
 )
 
 type applicationUsecase struct {
 	applicationRepository repository.ApplicationRepository
 	jobClient             *client.JobClient
+	userClient            *client.UserClient
 	companyClient         *client.CompanyClient
+	skillTagUsecase       skilltag.SkillTagUsecase
 }
 
 func NewApplicationUsecase(
 	applicationRepository repository.ApplicationRepository,
 	jobClient *client.JobClient,
+	userClient *client.UserClient,
 	companyClient *client.CompanyClient,
+	skillTagUsecase skilltag.SkillTagUsecase,
 ) ApplicationUsecase {
 	return &applicationUsecase{
 		applicationRepository: applicationRepository,
 		jobClient:             jobClient,
+		userClient:            userClient,
 		companyClient:         companyClient,
+		skillTagUsecase:       skillTagUsecase,
 	}
 }
 

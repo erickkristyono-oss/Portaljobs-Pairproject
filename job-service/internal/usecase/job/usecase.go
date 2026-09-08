@@ -2,40 +2,34 @@ package job
 
 import (
 	"context"
-	"time"
 
 	"job-service/internal/domain/constant"
 	"job-service/internal/domain/entity"
-	domainerrors "job-service/internal/domain/error"
+	domainerror "job-service/internal/domain/error"
 	"job-service/internal/domain/repository"
 	"job-service/internal/dto/request"
 )
 
-type CompanyClient interface {
-	GetCompanyByUserID(ctx context.Context, userID uint) (uint, error)
-}
-
 type jobUsecase struct {
-	jobRepository repository.JobRepository
-	companyClient CompanyClient
+	jobRepository           repository.JobRepository
+	requiredSkillRepository repository.JobRequiredSkillRepository
 }
 
-func NewJobUsecase(jobRepository repository.JobRepository, companyClient CompanyClient) JobUsecase {
+var _ JobUsecase = (*jobUsecase)(nil)
+
+func NewJobUsecase(
+	jobRepository repository.JobRepository,
+	requiredSkillRepository repository.JobRequiredSkillRepository,
+) JobUsecase {
 	return &jobUsecase{
-		jobRepository: jobRepository,
-		companyClient: companyClient,
+		jobRepository:           jobRepository,
+		requiredSkillRepository: requiredSkillRepository,
 	}
 }
 
 func (u *jobUsecase) Create(ctx context.Context, userID uint, req request.CreateJobRequest) (*entity.Job, error) {
-
-	companyID, err := u.companyClient.GetCompanyByUserID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
 	job := &entity.Job{
-		CompanyID:        companyID,
+		CompanyID:        userID,
 		Judul:            req.Judul,
 		AboutRole:        req.AboutRole,
 		Responsibilities: req.Responsibilities,
@@ -49,43 +43,55 @@ func (u *jobUsecase) Create(ctx context.Context, userID uint, req request.Create
 		return nil, err
 	}
 
+	requiredSkills := make(
+		[]entity.JobRequiredSkill,
+		0,
+		len(req.RequiredSkills),
+	)
+
+	for _, skillReq := range req.RequiredSkills {
+		requiredSkills = append(
+			requiredSkills,
+			entity.JobRequiredSkill{
+				JobID:       job.ID,
+				NameLicense: skillReq.NameLicense,
+				SkillTag:    skillReq.SkillTag,
+				Required:    skillReq.Required,
+			},
+		)
+	}
+
+	if err := u.requiredSkillRepository.CreateMany(
+		ctx,
+		requiredSkills,
+	); err != nil {
+		return nil, err
+	}
+
 	return job, nil
 }
 
 func (u *jobUsecase) GetByID(ctx context.Context, id uint) (*entity.Job, error) {
-
 	return u.jobRepository.FindByID(ctx, id)
 }
 
 func (u *jobUsecase) GetAll(ctx context.Context) ([]*entity.Job, error) {
-
+	// GET /jobs hanya menampilkan job yang published.
 	return u.jobRepository.FindPublished(ctx)
 }
 
 func (u *jobUsecase) GetByCompanyID(ctx context.Context, userID uint) ([]*entity.Job, error) {
-
-	companyID, err := u.companyClient.GetCompanyByUserID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return u.jobRepository.FindByCompanyID(ctx, companyID)
+	return u.jobRepository.FindByCompanyID(ctx, userID)
 }
 
 func (u *jobUsecase) Update(ctx context.Context, userID uint, id uint, req request.UpdateJobRequest) (*entity.Job, error) {
-
 	job, err := u.jobRepository.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := u.checkOwnership(ctx, userID, job.CompanyID); err != nil {
-		return nil, err
-	}
-
-	// Job yang sudah closed tidak boleh diedit.
-	if job.Status == constant.JobClosed {
-		return nil, domainerrors.ErrConflict
+	if job.CompanyID != userID {
+		return nil, domainerror.ErrForbidden
 	}
 
 	job.Judul = req.Judul
@@ -94,9 +100,42 @@ func (u *jobUsecase) Update(ctx context.Context, userID uint, id uint, req reque
 	job.Deskripsi = req.Deskripsi
 	job.Lokasi = req.Lokasi
 	job.Gaji = req.Gaji
-	job.UpdatedAt = time.Now()
 
 	if err := u.jobRepository.Update(ctx, job); err != nil {
+		return nil, err
+	}
+
+	// Hapus required skill lama.
+	if err := u.requiredSkillRepository.DeleteByJobID(
+		ctx,
+		job.ID,
+	); err != nil {
+		return nil, err
+	}
+
+	// Simpan required skill baru.
+	requiredSkills := make(
+		[]entity.JobRequiredSkill,
+		0,
+		len(req.RequiredSkills),
+	)
+
+	for _, skillReq := range req.RequiredSkills {
+		requiredSkills = append(
+			requiredSkills,
+			entity.JobRequiredSkill{
+				JobID:       job.ID,
+				NameLicense: skillReq.NameLicense,
+				SkillTag:    skillReq.SkillTag,
+				Required:    skillReq.Required,
+			},
+		)
+	}
+
+	if err := u.requiredSkillRepository.CreateMany(
+		ctx,
+		requiredSkills,
+	); err != nil {
 		return nil, err
 	}
 
@@ -104,75 +143,60 @@ func (u *jobUsecase) Update(ctx context.Context, userID uint, id uint, req reque
 }
 
 func (u *jobUsecase) Delete(ctx context.Context, userID uint, id uint) error {
-
 	job, err := u.jobRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	if err := u.checkOwnership(ctx, userID, job.CompanyID); err != nil {
-		return err
+	if job.CompanyID != userID {
+		return domainerror.ErrForbidden
 	}
 
-	if job.Status != constant.JobDraft {
-		return domainerrors.ErrConflict
+	// Hapus required skills terlebih dahulu.
+	if err := u.requiredSkillRepository.DeleteByJobID(
+		ctx,
+		id,
+	); err != nil {
+		return err
 	}
 
 	return u.jobRepository.Delete(ctx, id)
 }
 
 func (u *jobUsecase) Publish(ctx context.Context, userID uint, id uint) error {
-
 	job, err := u.jobRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	if err := u.checkOwnership(ctx, userID, job.CompanyID); err != nil {
-		return err
+	if job.CompanyID != userID {
+		return domainerror.ErrForbidden
 	}
 
 	if job.Status != constant.JobDraft {
-		return domainerrors.ErrConflict
+		return domainerror.ErrConflict
 	}
 
 	job.Status = constant.JobPublished
-	job.UpdatedAt = time.Now()
 
 	return u.jobRepository.Update(ctx, job)
 }
 
 func (u *jobUsecase) Close(ctx context.Context, userID uint, id uint) error {
-
 	job, err := u.jobRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	if err := u.checkOwnership(ctx, userID, job.CompanyID); err != nil {
-		return err
+	if job.CompanyID != userID {
+		return domainerror.ErrForbidden
 	}
 
 	if job.Status != constant.JobPublished {
-		return domainerrors.ErrConflict
+		return domainerror.ErrConflict
 	}
 
 	job.Status = constant.JobClosed
-	job.UpdatedAt = time.Now()
 
 	return u.jobRepository.Update(ctx, job)
-}
-
-func (u *jobUsecase) checkOwnership(ctx context.Context, userID uint, companyID uint) error {
-
-	currentCompanyID, err := u.companyClient.GetCompanyByUserID(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	if currentCompanyID != companyID {
-		return domainerrors.ErrForbidden
-	}
-
-	return nil
 }

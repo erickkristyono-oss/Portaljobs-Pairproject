@@ -9,8 +9,7 @@ type Skill struct {
 	ID           uint
 	UserID       uint
 	NameLicense  string
-	Category     string
-	Subcategory  string
+	SkillTag     string
 	Level        constant.SkillLevel
 	Organization string
 	Grade        string

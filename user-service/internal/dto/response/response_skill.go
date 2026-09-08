@@ -6,8 +6,7 @@ type SkillResponse struct {
 	ID           uint      `json:"id"`
 	UserID       uint      `json:"user_id"`
 	NameLicense  string    `json:"name_license"`
-	Category     string    `json:"category"`
-	Subcategory  string    `json:"subcategory"`
+	SkillTag     string    `json:"skill_tag"`
 	Level        string    `json:"level"`
 	Organization string    `json:"organization"`
 	Grade        string    `json:"grade"`

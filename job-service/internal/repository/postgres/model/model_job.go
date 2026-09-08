@@ -9,13 +9,13 @@ import (
 type JobModel struct {
 	ID               uint               `gorm:"primaryKey"`
 	CompanyID        uint               `gorm:"not null;index"`
-	Judul            string             `gorm:"type:varchar(255);not null"`
+	Judul            string             `gorm:"type:varchar(150);not null"`
 	AboutRole        string             `gorm:"type:text;not null"`
 	Responsibilities string             `gorm:"type:text;not null"`
 	Deskripsi        string             `gorm:"type:text;not null"`
-	Lokasi           string             `gorm:"type:varchar(255);not null"`
+	Lokasi           string             `gorm:"type:varchar(150);not null"`
 	Gaji             int64              `gorm:"not null"`
-	Status           constant.JobStatus `gorm:"type:varchar(20);not null;index"`
+	Status           constant.JobStatus `gorm:"type:varchar(20);not null"`
 	CreatedAt        time.Time          `gorm:"not null"`
 	UpdatedAt        time.Time          `gorm:"not null"`
 }
