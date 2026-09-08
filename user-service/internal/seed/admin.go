@@ -1,7 +1,6 @@
 package seed
 
 import (
-	"errors"
 	"log"
 
 	"user-service/internal/domain/constant"
@@ -12,22 +11,21 @@ import (
 )
 
 func SeedAdmin(db *gorm.DB) {
-	var existingUser model.UserModel
+	var count int64
 
 	err := db.
+		Model(&model.UserModel{}).
 		Where("email = ?", "admin@gmail.com").
-		First(&existingUser).
-		Error
+		Count(&count).Error
 
-	// Admin sudah ada
-	if err == nil {
-		log.Println("admin already exists")
-		return
+	if err != nil {
+		log.Fatal("failed to check admin:", err)
 	}
 
-	// Error selain record not found
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Fatal("failed to check admin:", err)
+	// Admin sudah ada
+	if count > 0 {
+		log.Println("admin already exists")
+		return
 	}
 
 	// Hash password
@@ -39,7 +37,7 @@ func SeedAdmin(db *gorm.DB) {
 		log.Fatal("failed to hash admin password:", err)
 	}
 
-	// Buat admin
+	// Data admin
 	admin := model.UserModel{
 		Nama:     "Administrator",
 		Email:    "admin@gmail.com",
@@ -48,6 +46,7 @@ func SeedAdmin(db *gorm.DB) {
 		Status:   "active",
 	}
 
+	// Insert admin
 	if err := db.Create(&admin).Error; err != nil {
 		log.Fatal("failed to seed admin:", err)
 	}

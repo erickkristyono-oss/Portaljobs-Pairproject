@@ -10,7 +10,7 @@ import (
 	"user-service/config"
 	"user-service/internal/handler"
 	"user-service/internal/repository/postgres"
-	"user-service/seed"
+	"user-service/internal/seed"
 
 	usecase_portfolio "user-service/internal/usecase/portfolio"
 	usecase_profile "user-service/internal/usecase/profile"
@@ -34,7 +34,7 @@ func main() {
 
 	log.Println("database connected successfully")
 
-	// Seed Admin
+	// Seed admin
 	seed.SeedAdmin(db)
 
 	// Repository

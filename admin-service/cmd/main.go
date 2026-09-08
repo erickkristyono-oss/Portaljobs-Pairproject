@@ -5,6 +5,7 @@ import (
 
 	"admin-service/config"
 	"admin-service/internal/handler"
+	"admin-service/internal/helper"
 	"admin-service/internal/repository/postgres"
 	"admin-service/internal/router"
 	"admin-service/internal/usecase/report"
@@ -38,6 +39,9 @@ func main() {
 
 	// ECHO
 	e := echo.New()
+
+	//validator
+	e.Validator = helper.NewValidator()
 
 	// Request logger
 	e.Use(middleware.RequestLogger())
