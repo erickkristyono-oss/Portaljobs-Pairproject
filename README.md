@@ -170,3 +170,39 @@ create profile company :
 }
 
 token:
+
+
+Register jobseeker:
+
+imung
+imung@mail.com
+imung123
+
+token :
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiY29tcGFueSIsImV4cCI6MTc4ODU5OTc0MSwiaWF0IjoxNzg4NTEzMzQxfQ.84mXyEXkROwZQSSKbXYxRLRoyHqNE_C50oaIt5C1_E0
+
+token login:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJyb2xlIjoiam9ic2Vla2VyIiwiZXhwIjoxNzg4OTYyNTU3LCJpYXQiOjE3ODg4NzYxNTd9.TwzT9BDTVJevBCXDlyMeAhA8WwIki3uGlC3Sr0HS6j0
+
+POST JOB company
+
+{ "judul": "Fullstack", "lokasi": "Yogyakarta", "required_skills": ["JavaScript Modern", "Framework Front-End", "go","postgresql"] }
+
+{
+  "judul": "Fullstack",
+  "about_role": "Membangun dan memelihara REST API untuk portal kerja",
+  "responsibilities": "Desain endpoint, menulis unit test, code review, deploy ke GCP",
+  "deskripsi": "fullstack",
+  "lokasi": "Yogyakarta",
+  "gaji": 25000000,
+  "required_skills": ["JavaScript Modern", "Framework Front-End", "go","postgresql"]
+}
+
+
+PUT company profile
+{
+  "name": "PT Maju Jaya",
+  "field_of": "Technology",
+  "address": "Jakarta Selatan",
+  "description": "Perusahaan software"
+}

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"portaljob/internal/domain"
@@ -109,5 +110,7 @@ func (u *ApplicationUsecase) notify(ctx context.Context, userID uint, message st
 	if err != nil || profile.PhoneNumber == "" {
 		return
 	}
-	_ = u.notifier.Send(ctx, profile.PhoneNumber, message)
+	if err := u.notifier.Send(ctx, profile.PhoneNumber, message); err != nil {
+		log.Printf("[notify] gagal kirim WA ke user %d: %v", userID, err)
+	}
 }

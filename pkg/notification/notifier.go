@@ -1,18 +1,20 @@
 package notification
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"portaljob/internal/domain"
 )
 
-// StubNotifier just logs. Used by default and in local/dev so the app runs
-// without any real WA credentials.
+// StubNotifier just logs. Default in local/dev so the app runs without any real
+// WA credentials.
 type StubNotifier struct{}
 
 func NewStub() domain.Notifier { return &StubNotifier{} }
@@ -22,9 +24,9 @@ func (s *StubNotifier) Send(ctx context.Context, to, message string) error {
 	return nil
 }
 
-// FonnteNotifier sends a WhatsApp message via the Fonnte gateway (an example
-// Indonesian provider). Swap this out for Twilio / Meta Cloud API later — the
-// rest of the app only depends on domain.Notifier, so nothing else changes.
+// FonnteNotifier sends a WhatsApp message via the Fonnte gateway.
+// Fonnte expects application/x-www-form-urlencoded with fields `target` and
+// `message`, and the raw token in the Authorization header (no "Bearer").
 type FonnteNotifier struct {
 	token  string
 	apiURL string
@@ -40,18 +42,32 @@ func NewFonnte(token, apiURL string) domain.Notifier {
 }
 
 func (f *FonnteNotifier) Send(ctx context.Context, to, message string) error {
-	body, _ := json.Marshal(map[string]string{"target": to, "message": message})
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, f.apiURL, bytes.NewReader(body))
+	form := url.Values{}
+	form.Set("target", to)
+	form.Set("message", message)
+	form.Set("countryCode", "62") // replaces a leading 0 with 62; no-op if already 62
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, f.apiURL, strings.NewReader(form.Encode()))
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", f.token)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", f.token) // Fonnte: token directly, no "Bearer"
 
 	resp, err := f.client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("fonnte: http %d: %s", resp.StatusCode, string(body))
+	}
+	// Fonnte can reply 200 with {"status":false,...} when the device is
+	// disconnected or the number is invalid; surface that for easier debugging.
+	if strings.Contains(string(body), "\"status\":false") {
+		return fmt.Errorf("fonnte: send rejected: %s", string(body))
+	}
 	return nil
 }
