@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: portaljob
+      POSTGRES_PASSWORD: portaljob_secret
+      POSTGRES_DB: portaljob
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portaljob"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # Sengaja TIDAK mem-publish port 5432 ke host. Postgres hanya diakses
+    # container api lewat jaringan internal Docker -> aman di VPS publik.
+    # Untuk lihat DB dari DBeaver di VPS, pakai SSH tunnel (lihat catatan).
+
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env            # JWT_SECRET, WA_PROVIDER, FONNTE_TOKEN, dll dari .env
+    environment:        # nilai khusus Docker (menimpa .env untuk koneksi DB)
+      APP_PORT: "8080"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: portaljob
+      DB_PASSWORD: portaljob_secret
+      DB_NAME: portaljob
+      DB_SSLMODE: disable
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
