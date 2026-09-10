@@ -1,19 +1,24 @@
 package constant
 
+type ApplicationStatus string
+
 const (
-	ApplicationApplied  = "applied"
-	ApplicationReviewed = "reviewed"
-	ApplicationAccepted = "accepted"
-	ApplicationRejected = "rejected"
+	ApplicationApplied   ApplicationStatus = "applied"
+	ApplicationReviewed  ApplicationStatus = "reviewed"
+	ApplicationInterview ApplicationStatus = "interview"
+	ApplicationAccepted  ApplicationStatus = "accepted"
+	ApplicationRejected  ApplicationStatus = "rejected"
 )
 
 func IsValidApplicationStatus(status string) bool {
-	switch status {
+	switch ApplicationStatus(status) {
 	case ApplicationApplied,
 		ApplicationReviewed,
+		ApplicationInterview,
 		ApplicationAccepted,
 		ApplicationRejected:
 		return true
+
 	default:
 		return false
 	}

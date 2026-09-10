@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
+	"application-service/internal/client"
 	"application-service/internal/domain/constant"
 	domainerrors "application-service/internal/domain/error"
 	"application-service/internal/dto/request"
@@ -26,6 +27,8 @@ func NewApplicationHandler(
 	}
 }
 
+// Apply godoc
+// POST /applications
 // Apply godoc
 // POST /applications
 func (h *ApplicationHandler) Apply(c *echo.Context) error {
@@ -54,8 +57,17 @@ func (h *ApplicationHandler) Apply(c *echo.Context) error {
 		)
 	}
 
-	applicationData, err := h.usecase.Apply(
+	// Ambil JWT dari request yang masuk
+	authHeader := c.Request().Header.Get("Authorization")
+
+	// Simpan JWT ke context
+	ctx := client.SetAuthorizationToken(
 		c.Request().Context(),
+		authHeader,
+	)
+
+	applicationData, err := h.usecase.Apply(
+		ctx,
 		userID,
 		req,
 	)
@@ -239,12 +251,20 @@ func (h *ApplicationHandler) UpdateStatus(c *echo.Context) error {
 		)
 	}
 
-	err = h.usecase.UpdateStatus(
+	authHeader := c.Request().Header.Get("Authorization")
+
+	ctx := client.SetAuthorizationToken(
 		c.Request().Context(),
+		authHeader,
+	)
+
+	err = h.usecase.UpdateStatus(
+		ctx,
 		userID,
 		uint(id),
 		req.Status,
 	)
+
 	if err != nil {
 		return h.handleError(c, err)
 	}

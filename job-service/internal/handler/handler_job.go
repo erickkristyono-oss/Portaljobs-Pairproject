@@ -7,6 +7,7 @@ import (
 	"job-service/internal/dto/request"
 	"job-service/internal/dto/response"
 	"job-service/internal/helper"
+	"job-service/internal/mapper"
 	"job-service/internal/middleware"
 	jobUsecase "job-service/internal/usecase/job"
 
@@ -57,17 +58,15 @@ func (h *JobHandler) Create(c *echo.Context) error {
 	})
 }
 
-// GetAll mengambil semua lowongan.
+// GetAll mengambil semua lowongan published.
 // GET /jobs
 func (h *JobHandler) GetAll(c *echo.Context) error {
-
 	userID, err := getUserID(c)
 	if err != nil {
 		return err
 	}
 
-	// userID digunakan untuk memastikan user sudah login.
-	// Semua user yang memiliki JWT dapat melihat job published.
+	// User ID digunakan untuk memastikan user sudah login.
 	_ = userID
 
 	jobs, err := h.jobUsecase.GetAll(
@@ -234,6 +233,42 @@ func (h *JobHandler) Close(c *echo.Context) error {
 	return c.JSON(http.StatusOK, helper.Response{
 		ResponseCode:    http.StatusOK,
 		ResponseMessage: "job closed successfully",
+	})
+}
+
+// GetRequiredSkills mengambil required skills dari sebuah job.
+// GET /internal/jobs/:id/required-skills
+func (h *JobHandler) GetRequiredSkills(c *echo.Context) error {
+	id, err := getIDParam(c)
+	if err != nil {
+		return helper.BadRequest(c, "invalid job id")
+	}
+
+	skills, err := h.jobUsecase.GetRequiredSkills(
+		c.Request().Context(),
+		id,
+	)
+	if err != nil {
+		return handleDomainError(c, err)
+	}
+
+	data := make(
+		[]response.JobRequiredSkillResponse,
+		0,
+		len(skills),
+	)
+
+	for _, skill := range skills {
+		data = append(
+			data,
+			mapper.ToJobRequiredSkillResponse(skill),
+		)
+	}
+
+	return c.JSON(http.StatusOK, helper.Response{
+		ResponseCode:    http.StatusOK,
+		ResponseMessage: "required skills retrieved successfully",
+		ResponseData:    data,
 	})
 }
 

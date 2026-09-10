@@ -22,6 +22,8 @@ func ProfileModelToEntity(profile *model.ProfileModel) *entity.Profile {
 		EducationLevel: profile.EducationLevel,
 		Started:        profile.Started,
 		Graduated:      profile.Graduated,
+		CVURL:          profile.CVURL,
+		PortfolioURL:   profile.PortfolioURL,
 		CreatedAt:      profile.CreatedAt,
 		UpdatedAt:      profile.UpdatedAt,
 	}
@@ -43,6 +45,8 @@ func ProfileEntityToModel(profile *entity.Profile) *model.ProfileModel {
 		EducationLevel: profile.EducationLevel,
 		Started:        profile.Started,
 		Graduated:      profile.Graduated,
+		CVURL:          profile.CVURL,
+		PortfolioURL:   profile.PortfolioURL,
 		CreatedAt:      profile.CreatedAt,
 		UpdatedAt:      profile.UpdatedAt,
 	}
@@ -64,6 +68,8 @@ func ProfileEntityToResponse(profile *entity.Profile) *response.ProfileResponse 
 		EducationLevel: profile.EducationLevel,
 		Started:        profile.Started,
 		Graduated:      profile.Graduated,
+		CVURL:          profile.CVURL,
+		PortfolioURL:   profile.PortfolioURL,
 		CreatedAt:      profile.CreatedAt,
 		UpdatedAt:      profile.UpdatedAt,
 	}

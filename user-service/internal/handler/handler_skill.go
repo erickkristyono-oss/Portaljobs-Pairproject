@@ -77,6 +77,51 @@ func (h *SkillHandler) GetByUserID(c *echo.Context) error {
 	)
 }
 
+func (h *SkillHandler) Update(c *echo.Context) error {
+	userID, err := getUserID(c)
+	if err != nil {
+		return err
+	}
+
+	skillID, err := strconv.ParseUint(
+		c.Param("id"),
+		10,
+		64,
+	)
+	if err != nil {
+		return helper.BadRequest(
+			c,
+			"invalid skill id",
+		)
+	}
+
+	var req request.UpdateSkillRequest
+
+	if err := c.Bind(&req); err != nil {
+		return helper.BadRequest(
+			c,
+			"invalid request body",
+		)
+	}
+
+	result, err := h.skillUsecase.Update(
+		c.Request().Context(),
+		userID,
+		uint(skillID),
+		req,
+	)
+	if err != nil {
+		return handleDomainError(c, err)
+	}
+
+	return helper.Success(
+		c,
+		http.StatusOK,
+		"skill berhasil diperbarui",
+		result,
+	)
+}
+
 func (h *SkillHandler) Delete(c *echo.Context) error {
 	userID, err := getUserID(c)
 	if err != nil {
@@ -108,5 +153,34 @@ func (h *SkillHandler) Delete(c *echo.Context) error {
 		http.StatusOK,
 		"skill berhasil dihapus",
 		nil,
+	)
+}
+
+func (h *SkillHandler) GetByUserIDInternal(c *echo.Context) error {
+	userID, err := strconv.ParseUint(
+		c.Param("user_id"),
+		10,
+		64,
+	)
+	if err != nil {
+		return helper.BadRequest(
+			c,
+			"invalid user id",
+		)
+	}
+
+	result, err := h.skillUsecase.GetByUserID(
+		c.Request().Context(),
+		uint(userID),
+	)
+	if err != nil {
+		return handleDomainError(c, err)
+	}
+
+	return helper.Success(
+		c,
+		http.StatusOK,
+		"skill berhasil ditemukan",
+		result,
 	)
 }

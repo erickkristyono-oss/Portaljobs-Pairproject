@@ -13,6 +13,8 @@ type ProfileResponse struct {
 	EducationLevel string    `json:"education_level"`
 	Started        int       `json:"started"`
 	Graduated      int       `json:"graduated"`
+	CVURL          string    `json:"cv_url"`
+	PortfolioURL   string    `json:"portfolio_url"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

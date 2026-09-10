@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	UserIDKey = "user_id"
-	RoleKey   = "role"
+	UserIDKey        = "user_id"
+	RoleKey          = "role"
+	AuthorizationKey = "authorization"
 )
 
 func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {

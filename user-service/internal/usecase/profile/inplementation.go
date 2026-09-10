@@ -75,6 +75,8 @@ func (u *profileUsecase) Update(ctx context.Context, userID uint, req request.Up
 	profile.EducationLevel = req.EducationLevel
 	profile.Started = req.Started
 	profile.Graduated = req.Graduated
+	profile.CVURL = req.CVURL
+	profile.PortfolioURL = req.PortfolioURL
 
 	if err := u.profileRepository.Update(ctx, profile); err != nil {
 		return nil, err
@@ -95,6 +97,8 @@ func toProfileResponse(profile *entity.Profile) *response.ProfileResponse {
 		EducationLevel: profile.EducationLevel,
 		Started:        profile.Started,
 		Graduated:      profile.Graduated,
+		CVURL:          profile.CVURL,
+		PortfolioURL:   profile.PortfolioURL,
 		CreatedAt:      profile.CreatedAt,
 		UpdatedAt:      profile.UpdatedAt,
 	}

@@ -45,9 +45,7 @@ func (r *jobRequiredSkillRepository) CreateMany(ctx context.Context, skills []en
 	for i := range skills {
 		skillModel := mapper.ToJobRequiredSkillModel(&skills[i])
 
-		if skillModel != nil {
-			skillModels = append(skillModels, *skillModel)
-		}
+		skillModels = append(skillModels, *skillModel)
 	}
 
 	if err := r.db.WithContext(ctx).

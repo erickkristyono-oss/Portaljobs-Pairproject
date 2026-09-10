@@ -16,4 +16,5 @@ type Skill struct {
 	ExpiredDate  string
 	Description  string
 	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }

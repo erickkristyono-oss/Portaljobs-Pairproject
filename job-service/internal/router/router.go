@@ -22,4 +22,7 @@ func SetupRouter(
 	e.DELETE("/jobs/:id", jobHandler.Delete, middleware.JWTMiddleware, middleware.RequireRole("company"))
 	e.PATCH("/jobs/:id/publish", jobHandler.Publish, middleware.JWTMiddleware, middleware.RequireRole("company"))
 	e.PATCH("/jobs/:id/close", jobHandler.Close, middleware.JWTMiddleware, middleware.RequireRole("company"))
+
+	// untuk mengambil required skill dari job
+	e.GET("/internal/jobs/:id/required-skills", jobHandler.GetRequiredSkills)
 }

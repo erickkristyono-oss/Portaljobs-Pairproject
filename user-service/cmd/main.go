@@ -10,17 +10,17 @@ import (
 	"user-service/config"
 	"user-service/internal/handler"
 	"user-service/internal/repository/postgres"
+	"user-service/internal/router"
 	"user-service/internal/seed"
 
 	usecase_portfolio "user-service/internal/usecase/portfolio"
 	usecase_profile "user-service/internal/usecase/profile"
 	usecase_skill "user-service/internal/usecase/skill"
 	usecase_user "user-service/internal/usecase/user"
-
-	"user-service/internal/router"
 )
 
 func main() {
+
 	// Load environment variable
 	if err := godotenv.Load(); err != nil {
 		log.Println("warning: .env file not found")
@@ -71,12 +71,12 @@ func main() {
 	port := os.Getenv("APP_PORT")
 
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
-	log.Println("user-service running on port:", port)
+	log.Println("user-service running on http://localhost:" + port)
 
 	if err := e.Start(":" + port); err != nil {
-		log.Fatal("failed to start server:", err)
+		log.Fatal("failed to start user-service:", err)
 	}
 }

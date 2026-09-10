@@ -2,6 +2,7 @@ CREATE TABLE companies (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL UNIQUE,
     name VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
     field_of VARCHAR(100) NOT NULL,
     address TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -10,3 +11,8 @@ CREATE TABLE companies (
 );
 
 select * from companies;
+
+
+
+TRUNCATE TABLE companies RESTART IDENTITY CASCADE;
+

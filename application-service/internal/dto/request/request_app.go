@@ -5,5 +5,5 @@ type CreateApplicationRequest struct {
 }
 
 type UpdateApplicationStatusRequest struct {
-	Status string `json:"status" validate:"required,oneof=applied reviewed accepted rejected"`
+	Status string `json:"status" validate:"required,oneof=applied reviewed interview accepted rejected"`
 }

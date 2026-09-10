@@ -63,6 +63,44 @@ func (u *skillUsecase) GetByUserID(ctx context.Context, userID uint) ([]response
 	return result, nil
 }
 
+func (u *skillUsecase) Update(
+	ctx context.Context,
+	userID uint,
+	skillID uint,
+	req request.UpdateSkillRequest,
+) (*response.SkillResponse, error) {
+
+	skill, err := u.skillRepository.FindByID(ctx, skillID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Pastikan skill milik user yang sedang login
+	if skill.UserID != userID {
+		return nil, domainerrors.ErrForbidden
+	}
+
+	level := constant.SkillLevel(req.Level)
+
+	if !constant.IsValidSkillLevel(level) {
+		return nil, domainerrors.ErrInvalidLevel
+	}
+
+	skill.NameLicense = req.NameLicense
+	skill.SkillTag = req.SkillTag
+	skill.Level = level
+	skill.Organization = req.Organization
+	skill.Grade = req.Grade
+	skill.ExpiredDate = req.ExpiredDate
+	skill.Description = req.Description
+
+	if err := u.skillRepository.Update(ctx, skill); err != nil {
+		return nil, err
+	}
+
+	return toSkillResponse(skill), nil
+}
+
 func (u *skillUsecase) Delete(ctx context.Context, userID uint, skillID uint) error {
 
 	skill, err := u.skillRepository.FindByID(ctx, skillID)

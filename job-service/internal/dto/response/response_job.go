@@ -22,6 +22,19 @@ type JobResponse struct {
 }
 
 func FromEntity(job *entity.Job) JobResponse {
+	requiredSkills := make([]JobRequiredSkillResponse, 0, len(job.RequiredSkills))
+
+	for _, skill := range job.RequiredSkills {
+		requiredSkills = append(requiredSkills, JobRequiredSkillResponse{
+			ID:          skill.ID,
+			JobID:       skill.JobID,
+			NameLicense: skill.NameLicense,
+			SkillTag:    skill.SkillTag,
+			Required:    skill.Required,
+			CreatedAt:   skill.CreatedAt,
+		})
+	}
+
 	return JobResponse{
 		ID:               job.ID,
 		CompanyID:        job.CompanyID,
@@ -32,6 +45,7 @@ func FromEntity(job *entity.Job) JobResponse {
 		Lokasi:           job.Lokasi,
 		Gaji:             job.Gaji,
 		Status:           string(job.Status),
+		RequiredSkills:   requiredSkills,
 		CreatedAt:        job.CreatedAt,
 		UpdatedAt:        job.UpdatedAt,
 	}

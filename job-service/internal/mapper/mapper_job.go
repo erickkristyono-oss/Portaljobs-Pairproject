@@ -11,6 +11,19 @@ func ToJobEntity(jobModel *model.JobModel) *entity.Job {
 		return nil
 	}
 
+	requiredSkills := make([]entity.JobRequiredSkill, 0, len(jobModel.RequiredSkills))
+
+	for _, skillModel := range jobModel.RequiredSkills {
+		requiredSkills = append(requiredSkills, entity.JobRequiredSkill{
+			ID:          skillModel.ID,
+			JobID:       skillModel.JobID,
+			NameLicense: skillModel.NameLicense,
+			SkillTag:    skillModel.SkillTag,
+			Required:    skillModel.Required,
+			CreatedAt:   skillModel.CreatedAt,
+		})
+	}
+
 	return &entity.Job{
 		ID:               jobModel.ID,
 		CompanyID:        jobModel.CompanyID,
@@ -21,6 +34,7 @@ func ToJobEntity(jobModel *model.JobModel) *entity.Job {
 		Lokasi:           jobModel.Lokasi,
 		Gaji:             jobModel.Gaji,
 		Status:           jobModel.Status,
+		RequiredSkills:   requiredSkills,
 		CreatedAt:        jobModel.CreatedAt,
 		UpdatedAt:        jobModel.UpdatedAt,
 	}

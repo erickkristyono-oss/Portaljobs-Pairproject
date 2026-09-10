@@ -10,6 +10,7 @@ import (
 func SetupRouter(
 	e *echo.Echo,
 	reportHandler *handler.ReportHandler,
+	userHandler *handler.UserHandler,
 ) {
 
 	admin := e.Group(
@@ -26,4 +27,6 @@ func SetupRouter(
 	admin.GET("/reports", reportHandler.FindAll)
 	admin.GET("/reports/:id", reportHandler.FindByID)
 	admin.PATCH("/reports/:id/status", reportHandler.UpdateStatus)
+
+	admin.PATCH("/users/:id/status", userHandler.UpdateStatus)
 }

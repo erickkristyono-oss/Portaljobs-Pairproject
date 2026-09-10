@@ -23,10 +23,7 @@ func NewProfileRepository(db *gorm.DB) domainrepo.ProfileRepository {
 	}
 }
 
-func (r *profileRepository) Create(
-	ctx context.Context,
-	profile *entity.Profile,
-) error {
+func (r *profileRepository) Create(ctx context.Context, profile *entity.Profile) error {
 	profileModel := mapper.ProfileEntityToModel(profile)
 
 	if err := r.db.WithContext(ctx).
@@ -41,10 +38,7 @@ func (r *profileRepository) Create(
 	return nil
 }
 
-func (r *profileRepository) Update(
-	ctx context.Context,
-	profile *entity.Profile,
-) error {
+func (r *profileRepository) Update(ctx context.Context, profile *entity.Profile) error {
 	profileModel := mapper.ProfileEntityToModel(profile)
 
 	result := r.db.WithContext(ctx).
@@ -59,6 +53,8 @@ func (r *profileRepository) Update(
 			"education_level": profileModel.EducationLevel,
 			"started":         profileModel.Started,
 			"graduated":       profileModel.Graduated,
+			"cv_url":          profileModel.CVURL,
+			"portfolio_url":   profileModel.PortfolioURL,
 			"updated_at":      profileModel.UpdatedAt,
 		})
 

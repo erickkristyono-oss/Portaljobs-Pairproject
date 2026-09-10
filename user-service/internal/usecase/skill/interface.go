@@ -10,5 +10,6 @@ import (
 type SkillUsecase interface {
 	Create(ctx context.Context, userID uint, req request.CreateSkillRequest) (*response.SkillResponse, error)
 	GetByUserID(ctx context.Context, userID uint) ([]response.SkillResponse, error)
+	Update(ctx context.Context, userID uint, skillID uint, req request.UpdateSkillRequest) (*response.SkillResponse, error)
 	Delete(ctx context.Context, userID uint, skillID uint) error
 }

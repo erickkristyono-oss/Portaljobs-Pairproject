@@ -13,6 +13,8 @@ type Profile struct {
 	EducationLevel string
 	Started        int
 	Graduated      int
+	CVURL          string
+	PortfolioURL   string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

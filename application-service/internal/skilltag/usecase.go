@@ -1,7 +1,6 @@
 package skilltag
 
 import (
-	"context"
 	"strings"
 
 	"application-service/internal/dto/response"
@@ -9,40 +8,31 @@ import (
 
 type skillTagUsecase struct{}
 
-var _ SkillTagUsecase = (*skillTagUsecase)(nil)
-
 func NewSkillTagUsecase() SkillTagUsecase {
 	return &skillTagUsecase{}
 }
 
-func (u *skillTagUsecase) Match(
-	ctx context.Context,
+func (s *skillTagUsecase) Match(
 	userSkills []response.SkillResponse,
 	jobSkills []response.JobRequiredSkillResponse,
 ) SkillTagResult {
 
-	_ = ctx
-
 	result := SkillTagResult{
-		MatchPercentage: 0,
-		Eligible:        true,
-		SkillTags:       make([]SkillTagDetail, 0, len(jobSkills)),
+		SkillTags: make([]SkillTagDetail, 0),
 	}
 
+	// Kalau job tidak mempunyai required skill,
+	// kandidat otomatis dianggap eligible.
 	if len(jobSkills) == 0 {
+		result.MatchPercentage = 100
+		result.Eligible = true
 		return result
 	}
 
-	totalSkills := 0
-	matchedSkills := 0
-	requiredSkills := 0
-	matchedRequiredSkills := 0
+	matchedCount := 0
+	requiredMatched := true
 
 	for _, jobSkill := range jobSkills {
-
-		if jobSkill.Required {
-			requiredSkills++
-		}
 
 		detail := SkillTagDetail{
 			JobSkillID:  jobSkill.ID,
@@ -53,61 +43,62 @@ func (u *skillTagUsecase) Match(
 			Matched:     false,
 		}
 
+		// 1. EXACT MATCH
+		//
+		// NameLicense dan SkillTag harus sama.
 		for _, userSkill := range userSkills {
 
-			userLicense := strings.TrimSpace(
-				strings.ToLower(userSkill.NameLicense),
+			nameMatch := strings.EqualFold(
+				strings.TrimSpace(userSkill.NameLicense),
+				strings.TrimSpace(jobSkill.NameLicense),
 			)
 
-			jobLicense := strings.TrimSpace(
-				strings.ToLower(jobSkill.NameLicense),
+			tagMatch := strings.EqualFold(
+				strings.TrimSpace(userSkill.SkillTag),
+				strings.TrimSpace(jobSkill.SkillTag),
 			)
 
-			userTag := strings.TrimSpace(
-				strings.ToLower(userSkill.SkillTag),
-			)
-
-			jobTag := strings.TrimSpace(
-				strings.ToLower(jobSkill.SkillTag),
-			)
-
-			// Exact match:
-			// NameLicense dan SkillTag sama.
-			if userLicense == jobLicense &&
-				userTag == jobTag {
-
+			if nameMatch && tagMatch {
 				detail.MatchType = MatchExact
 				detail.Matched = true
-				detail.MatchedSkill = userSkill.NameLicense
-
-				break
-			}
-
-			// Tag match:
-			// SkillTag sama walaupun NameLicense berbeda.
-			if userTag == jobTag {
-
-				detail.MatchType = MatchTagOnly
-				detail.Matched = true
-				detail.MatchedSkill = userSkill.NameLicense
-
+				detail.MatchedSkill = userSkill.SkillTag
 				break
 			}
 		}
 
+		// 2. TAG ONLY MATCH
+		//
+		// Jika NameLicense tidak sama,
+		// tetapi SkillTag sama.
+		if !detail.Matched {
+
+			for _, userSkill := range userSkills {
+
+				tagMatch := strings.EqualFold(
+					strings.TrimSpace(userSkill.SkillTag),
+					strings.TrimSpace(jobSkill.SkillTag),
+				)
+
+				if tagMatch {
+					detail.MatchType = MatchTagOnly
+					detail.Matched = true
+					detail.MatchedSkill = userSkill.SkillTag
+					break
+				}
+			}
+		}
+
+		// 3. HITUNG MATCH
 		if detail.Matched {
-			matchedSkills++
-
-			if detail.Required {
-				matchedRequiredSkills++
-			}
+			matchedCount++
 		}
 
-		if detail.Required && !detail.Matched {
-			result.Eligible = false
+		// Jika skill ini wajib tetapi
+		// tidak ditemukan pada user,
+		// maka user tidak eligible.
+		if jobSkill.Required && !detail.Matched {
+			requiredMatched = false
 		}
-
-		totalSkills++
 
 		result.SkillTags = append(
 			result.SkillTags,
@@ -115,19 +106,13 @@ func (u *skillTagUsecase) Match(
 		)
 	}
 
-	if totalSkills > 0 {
-		result.MatchPercentage =
-			float64(matchedSkills) /
-				float64(totalSkills) *
-				100
-	}
+	// MATCH PERCENTAGE
+	result.MatchPercentage =
+		float64(matchedCount) /
+			float64(len(jobSkills)) *
+			100
 
-	if requiredSkills == 0 {
-		result.Eligible = true
-	} else {
-		result.Eligible =
-			matchedRequiredSkills == requiredSkills
-	}
+	result.Eligible = requiredMatched
 
 	return result
 }

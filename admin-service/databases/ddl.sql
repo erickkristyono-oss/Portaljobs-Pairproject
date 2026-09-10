@@ -20,3 +20,5 @@ ON reports(status);
 
 
 select * from reports;
+
+TRUNCATE TABLE reports RESTART IDENTITY CASCADE;

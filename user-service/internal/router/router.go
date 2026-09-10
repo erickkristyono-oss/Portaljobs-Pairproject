@@ -19,6 +19,9 @@ func RegisterRoutes(
 	e.POST("/register", userHandler.Register)
 	e.POST("/login", userHandler.Login)
 
+	// Internal routes
+	e.PATCH("/internal/users/:id/status", userHandler.UpdateStatus)
+
 	// Authenticated Routes
 
 	auth := e.Group("")
@@ -32,11 +35,14 @@ func RegisterRoutes(
 	// Profile
 	jobseeker.POST("/me/profile", profileHandler.Create)
 	jobseeker.GET("/me/profile", profileHandler.GetByUserID)
+	e.GET("/internal/users/:user_id/profile", profileHandler.GetByUserIDInternal)
+	e.GET("/internal/users/:user_id/skills", skillHandler.GetByUserIDInternal)
 	jobseeker.PUT("/me/profile", profileHandler.Update)
 
 	// Skill
 	jobseeker.GET("/me/skills", skillHandler.GetByUserID)
 	jobseeker.POST("/me/skills", skillHandler.Create)
+	jobseeker.PUT("/me/skills/:id", skillHandler.Update)
 	jobseeker.DELETE("/me/skills/:id", skillHandler.Delete)
 
 	// Portfolio

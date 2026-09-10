@@ -13,7 +13,7 @@ type CreateSkillRequest struct {
 type UpdateSkillRequest struct {
 	NameLicense  string `json:"name_license" validate:"required"`
 	SkillTag     string `json:"skill_tag" validate:"required"`
-	Level        string `json:"level" validate:"required"`
+	Level        string `json:"level" validate:"required,oneof=beginner intermediate expert"`
 	Organization string `json:"organization"`
 	Grade        string `json:"grade"`
 	ExpiredDate  string `json:"expired_date"`

@@ -2,70 +2,103 @@ package middleware
 
 import (
 	"errors"
+	"os"
 	"strings"
 
-	"company-service/internal/helper"
-
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v5"
 )
 
-const (
-	UserIDKey = "user_id"
-	RoleKey   = "role"
-)
+type Claims struct {
+	UserID uint   `json:"user_id"`
+	Role   string `json:"role"`
+	jwt.RegisteredClaims
+}
 
 func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c *echo.Context) error {
+
 		authHeader := c.Request().Header.Get("Authorization")
 
 		if authHeader == "" {
-			return helper.Unauthorized(c, "authorization header is required")
+			return echo.NewHTTPError(
+				401,
+				"authorization header is required",
+			)
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
 
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			return helper.Unauthorized(c, "invalid authorization header")
+			return echo.NewHTTPError(
+				401,
+				"invalid authorization header",
+			)
 		}
 
 		tokenString := parts[1]
 
-		claims, err := helper.ValidateToken(tokenString)
-		if err != nil {
-			return helper.Unauthorized(c, "invalid or expired token")
+		// JWT Secret
+		secret := os.Getenv("JWT_SECRET")
+
+		if secret == "" {
+			return echo.NewHTTPError(
+				500,
+				"JWT_SECRET is not configured",
+			)
 		}
 
-		c.Set(UserIDKey, claims.UserID)
-		c.Set(RoleKey, claims.Role)
+		token, err := jwt.ParseWithClaims(
+			tokenString,
+			&Claims{},
+			func(token *jwt.Token) (interface{}, error) {
+
+				if token.Method != jwt.SigningMethodHS256 {
+					return nil, errors.New("invalid signing method")
+				}
+
+				return []byte(secret), nil
+			},
+		)
+
+		if err != nil {
+			return echo.NewHTTPError(
+				401,
+				"invalid token",
+			)
+		}
+
+		claims, ok := token.Claims.(*Claims)
+
+		if !ok || !token.Valid {
+			return echo.NewHTTPError(
+				401,
+				"invalid token",
+			)
+		}
+
+		c.Set("user_id", claims.UserID)
+		c.Set("role", claims.Role)
 
 		return next(c)
 	}
 }
 
-func RequireRole(requiredRole string) echo.MiddlewareFunc {
+func RequireRole(role string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
+
 		return func(c *echo.Context) error {
-			role, ok := c.Get(RoleKey).(string)
 
-			if !ok {
-				return helper.Unauthorized(c, "invalid user role")
-			}
+			userRole, ok := c.Get("role").(string)
 
-			if role != requiredRole {
-				return helper.Forbidden(c, "access denied")
+			if !ok || userRole != role {
+				return echo.NewHTTPError(
+					403,
+					"forbidden",
+				)
 			}
 
 			return next(c)
 		}
 	}
-}
-
-func GetUserID(c *echo.Context) (uint, error) {
-	userID, ok := c.Get(UserIDKey).(uint)
-
-	if !ok {
-		return 0, errors.New("invalid user identity")
-	}
-
-	return userID, nil
 }

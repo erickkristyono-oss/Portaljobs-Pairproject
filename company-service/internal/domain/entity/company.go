@@ -6,6 +6,7 @@ type Company struct {
 	ID          uint
 	UserID      uint
 	Name        string
+	Phone       string
 	FieldOf     string
 	Address     string
 	Description string

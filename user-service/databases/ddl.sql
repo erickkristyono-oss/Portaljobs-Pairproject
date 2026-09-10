@@ -37,6 +37,8 @@ CREATE TABLE profiles (
     education_level VARCHAR(100),
     started INT,
     graduated INT,
+    cv_url TEXT,
+	portfolio_url TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -57,8 +59,7 @@ CREATE TABLE skills (
     user_id BIGINT NOT NULL,
     name_license VARCHAR(150) NOT NULL,
     level VARCHAR(20) NOT NULL,
-    category VARCHAR(100),
-	subcategory VARCHAR(100),
+  	skill_tag text,
     organization VARCHAR(150),
     grade VARCHAR(50),
     expired_date VARCHAR(50),
@@ -112,9 +113,11 @@ ON portfolios(user_id);
 select * from users u ;
 select * from profiles p ;
 select * from skills s ;
-
-ALTER TABLE skills
-ADD COLUMN category VARCHAR(100),
-ADD COLUMN subcategory VARCHAR(100);
-
 select * from portfolios p ;
+
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+TRUNCATE TABLE profiles RESTART IDENTITY CASCADE;
+TRUNCATE TABLE skills RESTART IDENTITY CASCADE;
+TRUNCATE TABLE portfolios RESTART IDENTITY CASCADE;
+
+

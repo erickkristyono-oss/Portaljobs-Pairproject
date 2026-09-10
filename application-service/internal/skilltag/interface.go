@@ -1,15 +1,7 @@
 package skilltag
 
-import (
-	"context"
-
-	"application-service/internal/dto/response"
-)
+import "application-service/internal/dto/response"
 
 type SkillTagUsecase interface {
-	Match(
-		ctx context.Context,
-		userSkills []response.SkillResponse,
-		jobSkills []response.JobRequiredSkillResponse,
-	) SkillTagResult
+	Match(userSkills []response.SkillResponse, jobSkills []response.JobRequiredSkillResponse) SkillTagResult
 }

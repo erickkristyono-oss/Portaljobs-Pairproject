@@ -13,6 +13,8 @@ type ProfileModel struct {
 	EducationLevel string
 	Started        int
 	Graduated      int
+	CVURL          string `gorm:"type:text"`
+	PortfolioURL   string `gorm:"type:text"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

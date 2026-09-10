@@ -42,6 +42,7 @@ func (r *jobRepository) FindByID(ctx context.Context, id uint) (*entity.Job, err
 	var jobModel model.JobModel
 
 	err := r.db.WithContext(ctx).
+		Preload("RequiredSkills").
 		Where("id = ?", id).
 		First(&jobModel).Error
 
@@ -60,6 +61,7 @@ func (r *jobRepository) FindByCompanyID(ctx context.Context, companyID uint) ([]
 	var jobModels []model.JobModel
 
 	err := r.db.WithContext(ctx).
+		Preload("RequiredSkills").
 		Where("company_id = ?", companyID).
 		Order("id DESC").
 		Find(&jobModels).Error
@@ -85,6 +87,7 @@ func (r *jobRepository) FindAll(ctx context.Context) ([]*entity.Job, error) {
 	var jobModels []model.JobModel
 
 	err := r.db.WithContext(ctx).
+		Preload("RequiredSkills").
 		Order("id DESC").
 		Find(&jobModels).Error
 
@@ -109,6 +112,7 @@ func (r *jobRepository) FindPublished(ctx context.Context) ([]*entity.Job, error
 	var jobModels []model.JobModel
 
 	err := r.db.WithContext(ctx).
+		Preload("RequiredSkills").
 		Where("status = ?", "published").
 		Order("id DESC").
 		Find(&jobModels).Error

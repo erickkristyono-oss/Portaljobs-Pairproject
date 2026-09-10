@@ -19,3 +19,26 @@ CREATE INDEX idx_jobs_status
 ON jobs(status);
 
 select * from jobs;
+select * from job_required_skills;
+
+
+
+
+
+
+CREATE TABLE job_required_skills (
+    id BIGSERIAL,
+    job_id BIGINT NOT NULL,
+    name_license VARCHAR(255) NOT NULL,
+    skill_tag VARCHAR(255) NOT NULL,
+    required BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_job_required_skills_job_id
+ON job_required_skills(job_id);
+
+
+
+TRUNCATE TABLE jobs RESTART IDENTITY CASCADE;
+TRUNCATE TABLE job_required_skills RESTART IDENTITY CASCADE;

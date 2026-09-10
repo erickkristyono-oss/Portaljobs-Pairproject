@@ -2,31 +2,46 @@ package main
 
 import (
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v5"
 
 	"company-service/config"
 	"company-service/internal/handler"
-	companyRepository "company-service/internal/repository/postgres"
+	"company-service/internal/repository/postgres"
 	"company-service/internal/router"
-	companyUsecase "company-service/internal/usecase/company"
 
-	"github.com/labstack/echo/v5"
+	usecase_profile "company-service/internal/usecase/company_profile"
 )
 
 func main() {
+
+	// Load environment variable
+	if err := godotenv.Load(); err != nil {
+		log.Println("warning: .env file not found")
+	}
+
 	// Database
 	db, err := config.ConnectDatabase()
 	if err != nil {
 		log.Fatal("failed to connect database:", err)
 	}
 
+	log.Println("database connected successfully")
+
 	// Repository
-	companyRepo := companyRepository.NewCompanyRepository(db)
+	companyRepository := postgres.NewCompanyRepository(db)
 
 	// Usecase
-	companyUC := companyUsecase.NewCompanyUsecase(companyRepo)
+	profileUsecase := usecase_profile.NewCompanyProfileUsecase(
+		companyRepository,
+	)
 
 	// Handler
-	companyHandler := handler.NewCompanyHandler(companyUC)
+	profileHandler := handler.NewCompanyProfileHandler(
+		profileUsecase,
+	)
 
 	// Echo
 	e := echo.New()
@@ -34,15 +49,19 @@ func main() {
 	// Router
 	router.RegisterRoutes(
 		e,
-		companyHandler,
+		profileHandler,
 	)
 
-	// Start Server
-	const appPort = ":8081"
+	// Server
+	port := os.Getenv("APP_PORT")
 
-	log.Println("company-service running on", appPort)
+	if port == "" {
+		port = "8082"
+	}
 
-	if err := e.Start(appPort); err != nil {
-		log.Fatal("failed to start server:", err)
+	log.Println("company-service running on http://localhost:" + port)
+
+	if err := e.Start(":" + port); err != nil {
+		log.Fatal("failed to start company-service:", err)
 	}
 }

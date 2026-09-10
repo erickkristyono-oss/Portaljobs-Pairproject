@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"user-service/internal/dto/request"
 	"user-service/internal/helper"
@@ -15,9 +16,7 @@ type ProfileHandler struct {
 	profileUsecase profileUsecase.ProfileUsecase
 }
 
-func NewProfileHandler(
-	profileUsecase profileUsecase.ProfileUsecase,
-) *ProfileHandler {
+func NewProfileHandler(profileUsecase profileUsecase.ProfileUsecase) *ProfileHandler {
 	return &ProfileHandler{
 		profileUsecase: profileUsecase,
 	}
@@ -118,6 +117,35 @@ func (h *ProfileHandler) Update(c *echo.Context) error {
 		c,
 		http.StatusOK,
 		"profile berhasil diperbarui",
+		result,
+	)
+}
+
+// GetByUserIDInternal digunakan oleh service lain
+// untuk mengambil profile berdasarkan user_id.
+func (h *ProfileHandler) GetByUserIDInternal(c *echo.Context) error {
+	userIDParam := c.Param("user_id")
+
+	userID, err := strconv.ParseUint(userIDParam, 10, 64)
+	if err != nil {
+		return helper.BadRequest(
+			c,
+			"invalid user_id",
+		)
+	}
+
+	result, err := h.profileUsecase.GetByUserID(
+		c.Request().Context(),
+		uint(userID),
+	)
+	if err != nil {
+		return handleDomainError(c, err)
+	}
+
+	return helper.Success(
+		c,
+		http.StatusOK,
+		"profile berhasil ditemukan",
 		result,
 	)
 }

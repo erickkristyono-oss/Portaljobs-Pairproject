@@ -14,7 +14,7 @@ type CompanyClient struct {
 }
 
 type companyResponse struct {
-	ResponseCode    int    `json:"responseCode"`
+	ResponseCode    string `json:"responseCode"`
 	ResponseMessage string `json:"responseMessage"`
 	ResponseData    struct {
 		ID uint `json:"id"`
@@ -30,7 +30,10 @@ func NewCompanyClient(baseURL string) *CompanyClient {
 	}
 }
 
-func (c *CompanyClient) GetCompanyByUserID(ctx context.Context, userID uint) (uint, error) {
+func (c *CompanyClient) GetCompanyByUserID(
+	ctx context.Context,
+	userID uint,
+) (uint, error) {
 
 	url := fmt.Sprintf(
 		"%s/internal/companies/user/%d",
@@ -54,22 +57,22 @@ func (c *CompanyClient) GetCompanyByUserID(ctx context.Context, userID uint) (ui
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf(
-			"company service returned status %d",
-			resp.StatusCode,
-		)
-	}
-
 	var result companyResponse
 
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return 0, err
+		return 0, fmt.Errorf(
+			"failed to decode company service response: %w",
+			err,
+		)
 	}
 
-	if result.ResponseCode != http.StatusOK {
+	// Cek HTTP status saja
+	if resp.StatusCode < http.StatusOK ||
+		resp.StatusCode >= http.StatusMultipleChoices {
+
 		return 0, fmt.Errorf(
-			"company service error: %s",
+			"company service returned status %d: %s",
+			resp.StatusCode,
 			result.ResponseMessage,
 		)
 	}

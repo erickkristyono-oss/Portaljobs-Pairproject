@@ -75,6 +75,36 @@ func (r *skillRepository) FindByID(ctx context.Context, id uint) (*entity.Skill,
 	return mapper.SkillModelToEntity(&skillModel), nil
 }
 
+func (r *skillRepository) Update(
+	ctx context.Context,
+	skill *entity.Skill,
+) error {
+
+	result := r.db.WithContext(ctx).
+		Model(&model.SkillModel{}).
+		Where("id = ?", skill.ID).
+		Updates(map[string]interface{}{
+			"name_license": skill.NameLicense,
+			"skill_tag":    skill.SkillTag,
+			"level":        skill.Level,
+			"organization": skill.Organization,
+			"grade":        skill.Grade,
+			"expired_date": skill.ExpiredDate,
+			"description":  skill.Description,
+			"updated_at":   skill.UpdatedAt,
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
+}
+
 func (r *skillRepository) Delete(ctx context.Context, id uint) error {
 	result := r.db.WithContext(ctx).
 		Delete(&model.SkillModel{}, id)

@@ -15,6 +15,7 @@ type Job struct {
 	Lokasi           string
 	Gaji             int64
 	Status           constant.JobStatus
+	RequiredSkills   []JobRequiredSkill
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }
