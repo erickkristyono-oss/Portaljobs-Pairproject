@@ -13,4 +13,8 @@ type Usecase interface {
 		ctx context.Context,
 		userID uint,
 	) (*entity.Company, error)
+	GetByID(
+		ctx context.Context,
+		id uint,
+	) (*entity.Company, error)
 }

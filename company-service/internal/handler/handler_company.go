@@ -76,3 +76,37 @@ func (h *CompanyHandler) GetByUserID(c *echo.Context) error {
 		result,
 	)
 }
+
+func (h *CompanyHandler) GetByID(c *echo.Context) error {
+	companyID, err := strconv.ParseUint(
+		c.Param("id"),
+		10,
+		64,
+	)
+	if err != nil {
+		return helper.Error(
+			c,
+			http.StatusBadRequest,
+			"invalid company id",
+		)
+	}
+
+	result, err := h.usecase.GetByID(
+		c.Request().Context(),
+		uint(companyID),
+	)
+	if err != nil {
+		return helper.Error(
+			c,
+			http.StatusNotFound,
+			err.Error(),
+		)
+	}
+
+	return helper.Success(
+		c,
+		http.StatusOK,
+		"company retrieved successfully",
+		result,
+	)
+}

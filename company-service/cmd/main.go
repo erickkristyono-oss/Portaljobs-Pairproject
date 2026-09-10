@@ -12,6 +12,7 @@ import (
 	"company-service/internal/repository/postgres"
 	"company-service/internal/router"
 
+	usecase_company "company-service/internal/usecase/company"
 	usecase_profile "company-service/internal/usecase/company_profile"
 )
 
@@ -37,10 +38,16 @@ func main() {
 	profileUsecase := usecase_profile.NewCompanyProfileUsecase(
 		companyRepository,
 	)
+	companyUsecase := usecase_company.NewCompanyUsecase(
+		companyRepository,
+	)
 
 	// Handler
 	profileHandler := handler.NewCompanyProfileHandler(
 		profileUsecase,
+	)
+	companyHandler := handler.NewCompanyHandler(
+		companyUsecase,
 	)
 
 	// Echo
@@ -49,6 +56,7 @@ func main() {
 	// Router
 	router.RegisterRoutes(
 		e,
+		companyHandler,
 		profileHandler,
 	)
 

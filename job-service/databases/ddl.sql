@@ -21,9 +21,8 @@ ON jobs(status);
 select * from jobs;
 select * from job_required_skills;
 
-
-
-
+SELECT id, company_id, judul
+FROM jobs;
 
 
 CREATE TABLE job_required_skills (

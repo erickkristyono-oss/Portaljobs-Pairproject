@@ -65,3 +65,14 @@ func (u *companyUsecase) GetByUserID(
 		userID,
 	)
 }
+
+func (u *companyUsecase) GetByID(
+	ctx context.Context,
+	id uint,
+) (*entity.Company, error) {
+
+	return u.companyRepository.FindByID(
+		ctx,
+		id,
+	)
+}

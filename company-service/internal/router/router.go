@@ -9,6 +9,7 @@ import (
 
 func RegisterRoutes(
 	e *echo.Echo,
+	companyHandler *handler.CompanyHandler,
 	companyProfileHandler *handler.CompanyProfileHandler,
 ) {
 	auth := e.Group("")
@@ -33,6 +34,8 @@ func RegisterRoutes(
 	)
 
 	// internal point
+	e.GET("/companies/:id", companyHandler.GetByID)
+
 	e.GET(
 		"/internal/companies/user/:user_id",
 		companyProfileHandler.GetByUserID,

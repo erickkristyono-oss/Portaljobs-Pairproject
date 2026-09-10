@@ -16,3 +16,5 @@ select * from companies;
 
 TRUNCATE TABLE companies RESTART IDENTITY CASCADE;
 
+SELECT id, user_id, name
+FROM companies;
