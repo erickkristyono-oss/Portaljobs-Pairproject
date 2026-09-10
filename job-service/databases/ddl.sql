@@ -12,19 +12,6 @@ CREATE TABLE jobs (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_jobs_company_id
-ON jobs(company_id);
-
-CREATE INDEX idx_jobs_status
-ON jobs(status);
-
-select * from jobs;
-select * from job_required_skills;
-
-SELECT id, company_id, judul
-FROM jobs;
-
-
 CREATE TABLE job_required_skills (
     id BIGSERIAL,
     job_id BIGINT NOT NULL,
@@ -34,10 +21,23 @@ CREATE TABLE job_required_skills (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX idx_jobs_company_id
+ON jobs(company_id);
+
+CREATE INDEX idx_jobs_status
+ON jobs(status);
+
 CREATE INDEX idx_job_required_skills_job_id
 ON job_required_skills(job_id);
 
+/* =========================================== */
 
+select * from jobs;
+select * from job_required_skills;
 
+SELECT id, company_id, judul
+FROM jobs;
+
+/* reset data */
 TRUNCATE TABLE jobs RESTART IDENTITY CASCADE;
 TRUNCATE TABLE job_required_skills RESTART IDENTITY CASCADE;

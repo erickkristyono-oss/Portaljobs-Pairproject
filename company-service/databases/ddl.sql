@@ -12,9 +12,9 @@ CREATE TABLE companies (
 
 select * from companies;
 
+SELECT id, user_id, name
+FROM companies;
 
 
 TRUNCATE TABLE companies RESTART IDENTITY CASCADE;
 
-SELECT id, user_id, name
-FROM companies;
