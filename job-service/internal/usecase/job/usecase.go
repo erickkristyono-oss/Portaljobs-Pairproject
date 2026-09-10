@@ -32,11 +32,7 @@ func NewJobUsecase(
 	}
 }
 
-func (u *jobUsecase) Create(
-	ctx context.Context,
-	userID uint,
-	req request.CreateJobRequest,
-) (*entity.Job, error) {
+func (u *jobUsecase) Create(ctx context.Context, userID uint, req request.CreateJobRequest) (*entity.Job, error) {
 
 	fmt.Println("========================================")
 	fmt.Println("JOB USECASE CREATE")
@@ -132,10 +128,7 @@ func (u *jobUsecase) Create(
 	return job, nil
 }
 
-func (u *jobUsecase) GetByID(
-	ctx context.Context,
-	id uint,
-) (*entity.Job, error) {
+func (u *jobUsecase) GetByID(ctx context.Context, id uint) (*entity.Job, error) {
 	return u.jobRepository.FindByID(ctx, id)
 }
 
@@ -168,10 +161,7 @@ func (u *jobUsecase) GetByCompanyID(
 	)
 }
 
-func (u *jobUsecase) GetRequiredSkills(
-	ctx context.Context,
-	jobID uint,
-) ([]*entity.JobRequiredSkill, error) {
+func (u *jobUsecase) GetRequiredSkills(ctx context.Context, jobID uint) ([]*entity.JobRequiredSkill, error) {
 
 	// Pastikan job tersedia terlebih dahulu.
 	_, err := u.jobRepository.FindByID(
@@ -206,12 +196,7 @@ func (u *jobUsecase) GetRequiredSkills(
 	return result, nil
 }
 
-func (u *jobUsecase) Update(
-	ctx context.Context,
-	userID uint,
-	id uint,
-	req request.UpdateJobRequest,
-) (*entity.Job, error) {
+func (u *jobUsecase) Update(ctx context.Context, userID uint, id uint, req request.UpdateJobRequest) (*entity.Job, error) {
 
 	job, err := u.jobRepository.FindByID(
 		ctx,
@@ -287,11 +272,7 @@ func (u *jobUsecase) Update(
 	return job, nil
 }
 
-func (u *jobUsecase) Delete(
-	ctx context.Context,
-	userID uint,
-	id uint,
-) error {
+func (u *jobUsecase) Delete(ctx context.Context, userID uint, id uint) error {
 
 	job, err := u.jobRepository.FindByID(
 		ctx,
@@ -329,11 +310,7 @@ func (u *jobUsecase) Delete(
 	)
 }
 
-func (u *jobUsecase) Publish(
-	ctx context.Context,
-	userID uint,
-	id uint,
-) error {
+func (u *jobUsecase) Publish(ctx context.Context, userID uint, id uint) error {
 
 	job, err := u.jobRepository.FindByID(
 		ctx,
@@ -369,11 +346,7 @@ func (u *jobUsecase) Publish(
 	)
 }
 
-func (u *jobUsecase) Close(
-	ctx context.Context,
-	userID uint,
-	id uint,
-) error {
+func (u *jobUsecase) Close(ctx context.Context, userID uint, id uint) error {
 
 	job, err := u.jobRepository.FindByID(
 		ctx,

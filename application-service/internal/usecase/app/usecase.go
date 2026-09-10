@@ -45,11 +45,7 @@ func NewApplicationUsecase(
 }
 
 // Apply digunakan oleh jobseeker untuk melamar pekerjaan.
-func (u *applicationUsecase) Apply(
-	ctx context.Context,
-	userID uint,
-	req request.CreateApplicationRequest,
-) (*entity.Application, error) {
+func (u *applicationUsecase) Apply(ctx context.Context, userID uint, req request.CreateApplicationRequest) (*entity.Application, error) {
 
 	// 1. Cek job
 	_, jobStatus, jobTitle, err := u.jobClient.GetJobByID(
@@ -150,19 +146,13 @@ func (u *applicationUsecase) Apply(
 }
 
 // GetByID mengambil detail application.
-func (u *applicationUsecase) GetByID(
-	ctx context.Context,
-	id uint,
-) (*entity.Application, error) {
+func (u *applicationUsecase) GetByID(ctx context.Context, id uint) (*entity.Application, error) {
 
 	return u.applicationRepository.FindByID(ctx, id)
 }
 
 // GetMyApplications mengambil semua lamaran milik jobseeker.
-func (u *applicationUsecase) GetMyApplications(
-	ctx context.Context,
-	userID uint,
-) ([]*entity.Application, error) {
+func (u *applicationUsecase) GetMyApplications(ctx context.Context, userID uint) ([]*entity.Application, error) {
 
 	return u.applicationRepository.FindByUserID(
 		ctx,
@@ -173,11 +163,7 @@ func (u *applicationUsecase) GetMyApplications(
 // GetApplicationsByJobID mengambil semua application
 // pada job tertentu.
 // Hanya company pemilik job yang boleh mengakses.
-func (u *applicationUsecase) GetApplicationsByJobID(
-	ctx context.Context,
-	userID uint,
-	jobID uint,
-) ([]*entity.Application, error) {
+func (u *applicationUsecase) GetApplicationsByJobID(ctx context.Context, userID uint, jobID uint) ([]*entity.Application, error) {
 
 	// 1. Ambil informasi job
 	companyID, _, _, err := u.jobClient.GetJobByID(
@@ -209,134 +195,7 @@ func (u *applicationUsecase) GetApplicationsByJobID(
 	)
 }
 
-/*func (u *applicationUsecase) UpdateStatus(
-	ctx context.Context,
-	userID uint,
-	id uint,
-	status string,
-) error {
-
-	// 1. Validasi status
-	if !constant.IsValidApplicationStatus(status) {
-		return domainerrors.ErrConflict
-	}
-
-	// 2. Ambil application
-	application, err := u.applicationRepository.FindByID(
-		ctx,
-		id,
-	)
-	if err != nil {
-		return err
-	}
-
-	// 3. Ambil informasi job
-	companyID, _, jobTitle, err :=
-		u.jobClient.GetJobByID(
-			ctx,
-			application.JobID,
-		)
-
-	if err != nil {
-		return err
-	}
-
-	// 4. Ambil company berdasarkan user yang login
-	currentCompanyID, err :=
-		u.companyClient.GetCompanyByUserID(
-			ctx,
-			userID,
-		)
-
-	if err != nil {
-		return err
-	}
-
-	// 5. Pastikan company adalah pemilik job
-	if currentCompanyID != companyID {
-		return domainerrors.ErrForbidden
-	}
-
-	// 6. Validasi perpindahan status
-	if !isValidStatusTransition(
-		application.Status,
-		status,
-	) {
-		return domainerrors.ErrConflict
-	}
-
-	// 7. Ambil data kandidat SEBELUM update database
-	userProfile, err :=
-		u.userClient.GetUserProfile(
-			ctx,
-			application.UserID,
-		)
-
-	if err != nil {
-		return err
-	}
-
-	// 8. Ambil data company SEBELUM update database
-	company, err :=
-		u.companyClient.GetCompanyByID(
-			ctx,
-			companyID,
-		)
-
-	if err != nil {
-		return err
-	}
-
-	// 9. Update status application
-	if err := u.applicationRepository.UpdateStatus(
-		ctx,
-		id,
-		status,
-	); err != nil {
-		return err
-	}
-
-	// 10. Kirim notification setelah status berhasil di-update.
-	// Notification bukan alasan untuk menggagalkan update application.
-	switch constant.ApplicationStatus(status) {
-
-	case constant.ApplicationInterview:
-
-		_ = u.notificationService.SendInterviewInvitation(
-			ctx,
-			userProfile.PhoneNumber,
-			jobTitle,
-			company.Name,
-		)
-
-	case constant.ApplicationAccepted:
-
-		_ = u.notificationService.SendApplicationAccepted(
-			ctx,
-			userProfile.PhoneNumber,
-			jobTitle,
-			company.Name,
-		)
-
-	case constant.ApplicationRejected:
-
-		_ = u.notificationService.SendApplicationRejected(
-			ctx,
-			userProfile.PhoneNumber,
-			jobTitle,
-		)
-	}
-
-	return nil
-}
-*/
-
-func (u *applicationUsecase) UpdateStatus(
-	ctx context.Context,
-	userID uint,
-	id uint,
-	status string,
-) error {
+func (u *applicationUsecase) UpdateStatus(ctx context.Context, userID uint, id uint, status string) error {
 
 	fmt.Println("========================================")
 	fmt.Println("UPDATE APPLICATION STATUS")
@@ -596,10 +455,7 @@ func (u *applicationUsecase) UpdateStatus(
 	return nil
 }
 
-func (u *applicationUsecase) GetCompanyApplications(
-	ctx context.Context,
-	userID uint,
-) ([]*entity.Application, error) {
+func (u *applicationUsecase) GetCompanyApplications(ctx context.Context, userID uint) ([]*entity.Application, error) {
 
 	// Ambil company ID berdasarkan user yang sedang login
 	companyID, err := u.companyClient.GetCompanyByUserID(
@@ -627,11 +483,7 @@ func (u *applicationUsecase) GetCompanyApplications(
 }
 
 // Delete digunakan untuk menghapus application milik user.
-func (u *applicationUsecase) Delete(
-	ctx context.Context,
-	userID uint,
-	id uint,
-) error {
+func (u *applicationUsecase) Delete(ctx context.Context, userID uint, id uint) error {
 
 	application, err := u.applicationRepository.FindByID(
 		ctx,

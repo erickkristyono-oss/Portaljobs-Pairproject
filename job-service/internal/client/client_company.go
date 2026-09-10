@@ -30,10 +30,7 @@ func NewCompanyClient(baseURL string) *CompanyClient {
 	}
 }
 
-func (c *CompanyClient) GetCompanyByUserID(
-	ctx context.Context,
-	userID uint,
-) (uint, error) {
+func (c *CompanyClient) GetCompanyByUserID(ctx context.Context, userID uint) (uint, error) {
 
 	url := fmt.Sprintf(
 		"%s/internal/companies/user/%d",

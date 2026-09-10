@@ -35,20 +35,12 @@ func main() {
 	companyRepository := postgres.NewCompanyRepository(db)
 
 	// Usecase
-	profileUsecase := usecase_profile.NewCompanyProfileUsecase(
-		companyRepository,
-	)
-	companyUsecase := usecase_company.NewCompanyUsecase(
-		companyRepository,
-	)
+	profileUsecase := usecase_profile.NewCompanyProfileUsecase(companyRepository)
+	companyUsecase := usecase_company.NewCompanyUsecase(companyRepository)
 
 	// Handler
-	profileHandler := handler.NewCompanyProfileHandler(
-		profileUsecase,
-	)
-	companyHandler := handler.NewCompanyHandler(
-		companyUsecase,
-	)
+	profileHandler := handler.NewCompanyProfileHandler(profileUsecase)
+	companyHandler := handler.NewCompanyHandler(companyUsecase)
 
 	// Echo
 	e := echo.New()

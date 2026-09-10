@@ -8,12 +8,7 @@ type Response struct {
 	ResponseData    any    `json:"responseData"`
 }
 
-func Success(
-	c *echo.Context,
-	code int,
-	message string,
-	data any,
-) error {
+func Success(c *echo.Context, code int, message string, data any) error {
 	return c.JSON(code, Response{
 		ResponseCode:    "00",
 		ResponseMessage: message,
@@ -21,11 +16,7 @@ func Success(
 	})
 }
 
-func Error(
-	c *echo.Context,
-	code int,
-	message string,
-) error {
+func Error(c *echo.Context, code int, message string) error {
 	return c.JSON(code, Response{
 		ResponseCode:    "ERROR",
 		ResponseMessage: message,

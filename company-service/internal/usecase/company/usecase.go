@@ -14,19 +14,14 @@ type companyUsecase struct {
 	companyRepository repository.CompanyRepository
 }
 
-func NewCompanyUsecase(
-	companyRepository repository.CompanyRepository,
-) Usecase {
+func NewCompanyUsecase(companyRepository repository.CompanyRepository) Usecase {
 
 	return &companyUsecase{
 		companyRepository: companyRepository,
 	}
 }
 
-func (u *companyUsecase) Create(
-	ctx context.Context,
-	userID uint,
-) (*response.CreateCompanyResponse, error) {
+func (u *companyUsecase) Create(ctx context.Context, userID uint) (*response.CreateCompanyResponse, error) {
 
 	_, err := u.companyRepository.FindByUserID(ctx, userID)
 
@@ -55,10 +50,7 @@ func (u *companyUsecase) Create(
 	}, nil
 }
 
-func (u *companyUsecase) GetByUserID(
-	ctx context.Context,
-	userID uint,
-) (*entity.Company, error) {
+func (u *companyUsecase) GetByUserID(ctx context.Context, userID uint) (*entity.Company, error) {
 
 	return u.companyRepository.FindByUserID(
 		ctx,
@@ -66,10 +58,7 @@ func (u *companyUsecase) GetByUserID(
 	)
 }
 
-func (u *companyUsecase) GetByID(
-	ctx context.Context,
-	id uint,
-) (*entity.Company, error) {
+func (u *companyUsecase) GetByID(ctx context.Context, id uint) (*entity.Company, error) {
 
 	return u.companyRepository.FindByID(
 		ctx,

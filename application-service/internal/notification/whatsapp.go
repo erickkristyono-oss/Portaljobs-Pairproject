@@ -19,11 +19,7 @@ func NewWhatsAppNotification(
 	}
 }
 
-func (w *whatsappNotification) SendApplicationApplied(
-	ctx context.Context,
-	phone string,
-	jobTitle string,
-) error {
+func (w *whatsappNotification) SendApplicationApplied(ctx context.Context, phone string, jobTitle string) error {
 
 	message := fmt.Sprintf(
 		`Halo!
@@ -43,12 +39,7 @@ func (w *whatsappNotification) SendApplicationApplied(
 	)
 }
 
-func (w *whatsappNotification) SendInterviewInvitation(
-	ctx context.Context,
-	phone string,
-	jobTitle string,
-	companyName string,
-) error {
+func (w *whatsappNotification) SendInterviewInvitation(ctx context.Context, phone string, jobTitle string, companyName string) error {
 
 	message := fmt.Sprintf(
 		`Halo!
@@ -77,12 +68,7 @@ func (w *whatsappNotification) SendInterviewInvitation(
 	)
 }
 
-func (w *whatsappNotification) SendInterviewSelectedToCompany(
-	ctx context.Context,
-	phone string,
-	candidateName string,
-	jobTitle string,
-) error {
+func (w *whatsappNotification) SendInterviewSelectedToCompany(ctx context.Context, phone string, candidateName string, jobTitle string) error {
 
 	message := fmt.Sprintf(
 		`Halo!
@@ -107,12 +93,7 @@ func (w *whatsappNotification) SendInterviewSelectedToCompany(
 	)
 }
 
-func (w *whatsappNotification) SendApplicationAccepted(
-	ctx context.Context,
-	phone string,
-	jobTitle string,
-	companyName string,
-) error {
+func (w *whatsappNotification) SendApplicationAccepted(ctx context.Context, phone string, jobTitle string, companyName string) error {
 
 	message := fmt.Sprintf(
 		`Halo!
@@ -141,12 +122,7 @@ func (w *whatsappNotification) SendApplicationAccepted(
 	)
 }
 
-func (w *whatsappNotification) SendApplicationAcceptedToCompany(
-	ctx context.Context,
-	phone string,
-	candidateName string,
-	jobTitle string,
-) error {
+func (w *whatsappNotification) SendApplicationAcceptedToCompany(ctx context.Context, phone string, candidateName string, jobTitle string) error {
 
 	message := fmt.Sprintf(
 		`Halo!
@@ -171,11 +147,7 @@ func (w *whatsappNotification) SendApplicationAcceptedToCompany(
 	)
 }
 
-func (w *whatsappNotification) SendApplicationRejected(
-	ctx context.Context,
-	phone string,
-	jobTitle string,
-) error {
+func (w *whatsappNotification) SendApplicationRejected(ctx context.Context, phone string, jobTitle string) error {
 
 	message := fmt.Sprintf(
 		`Halo!

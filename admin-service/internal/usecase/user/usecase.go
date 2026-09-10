@@ -19,11 +19,7 @@ func NewUserUsecase(
 	}
 }
 
-func (u *userUsecase) UpdateStatus(
-	ctx context.Context,
-	id uint,
-	req request.UpdateUserStatusRequest,
-) error {
+func (u *userUsecase) UpdateStatus(ctx context.Context, id uint, req request.UpdateUserStatusRequest) error {
 
 	return u.userClient.UpdateStatus(
 		ctx,

@@ -9,12 +9,6 @@ import (
 
 type Usecase interface {
 	Create(ctx context.Context, userID uint) (*response.CreateCompanyResponse, error)
-	GetByUserID(
-		ctx context.Context,
-		userID uint,
-	) (*entity.Company, error)
-	GetByID(
-		ctx context.Context,
-		id uint,
-	) (*entity.Company, error)
+	GetByUserID(ctx context.Context, userID uint) (*entity.Company, error)
+	GetByID(ctx context.Context, id uint) (*entity.Company, error)
 }

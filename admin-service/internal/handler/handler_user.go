@@ -22,9 +22,7 @@ func NewUserHandler(
 	}
 }
 
-func (h *UserHandler) UpdateStatus(
-	c *echo.Context,
-) error {
+func (h *UserHandler) UpdateStatus(c *echo.Context) error {
 
 	id, err := strconv.ParseUint(
 		c.Param("id"),

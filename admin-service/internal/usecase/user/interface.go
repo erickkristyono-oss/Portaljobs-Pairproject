@@ -7,9 +7,5 @@ import (
 )
 
 type UserUsecase interface {
-	UpdateStatus(
-		ctx context.Context,
-		id uint,
-		req request.UpdateUserStatusRequest,
-	) error
+	UpdateStatus(ctx context.Context, id uint, req request.UpdateUserStatusRequest) error
 }

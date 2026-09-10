@@ -24,11 +24,7 @@ func NewCompanyProfileUsecase(
 	}
 }
 
-func (u *companyProfileUsecase) Create(
-	ctx context.Context,
-	userID uint,
-	req *request.CreateCompanyProfileRequest,
-) (*response.CompanyResponse, error) {
+func (u *companyProfileUsecase) Create(ctx context.Context, userID uint, req *request.CreateCompanyProfileRequest) (*response.CompanyResponse, error) {
 
 	// Cek apakah company profile sudah ada
 	existingCompany, err := u.companyRepository.FindByUserID(ctx, userID)
@@ -71,10 +67,7 @@ func (u *companyProfileUsecase) Create(
 	}, nil
 }
 
-func (u *companyProfileUsecase) Get(
-	ctx context.Context,
-	userID uint,
-) (*response.CompanyResponse, error) {
+func (u *companyProfileUsecase) Get(ctx context.Context, userID uint) (*response.CompanyResponse, error) {
 
 	company, err := u.companyRepository.FindByUserID(ctx, userID)
 
@@ -95,11 +88,7 @@ func (u *companyProfileUsecase) Get(
 	}, nil
 }
 
-func (u *companyProfileUsecase) Update(
-	ctx context.Context,
-	userID uint,
-	req *request.UpdateCompanyProfileRequest,
-) (*response.CompanyResponse, error) {
+func (u *companyProfileUsecase) Update(ctx context.Context, userID uint, req *request.UpdateCompanyProfileRequest) (*response.CompanyResponse, error) {
 
 	company, err := u.companyRepository.FindByUserID(ctx, userID)
 

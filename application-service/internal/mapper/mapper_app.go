@@ -6,9 +6,7 @@ import (
 	"application-service/internal/repository/postgres/model"
 )
 
-func ToApplicationEntity(
-	applicationModel *model.ApplicationModel,
-) *entity.Application {
+func ToApplicationEntity(applicationModel *model.ApplicationModel) *entity.Application {
 
 	if applicationModel == nil {
 		return nil
@@ -23,9 +21,7 @@ func ToApplicationEntity(
 	}
 }
 
-func ToApplicationModel(
-	application *entity.Application,
-) *model.ApplicationModel {
+func ToApplicationModel(application *entity.Application) *model.ApplicationModel {
 
 	if application == nil {
 		return nil
@@ -40,9 +36,7 @@ func ToApplicationModel(
 	}
 }
 
-func ToApplicationResponse(
-	application *entity.Application,
-) response.ApplicationResponse {
+func ToApplicationResponse(application *entity.Application) response.ApplicationResponse {
 
 	return response.FromEntity(application)
 }

@@ -5,9 +5,7 @@ import (
 	"company-service/internal/repository/postgres/model"
 )
 
-func EntityToCompanyModel(
-	company *entity.Company,
-) *model.CompanyModel {
+func EntityToCompanyModel(company *entity.Company) *model.CompanyModel {
 
 	return &model.CompanyModel{
 		ID:          company.ID,
@@ -22,9 +20,7 @@ func EntityToCompanyModel(
 	}
 }
 
-func CompanyModelToEntity(
-	company *model.CompanyModel,
-) *entity.Company {
+func CompanyModelToEntity(company *model.CompanyModel) *entity.Company {
 
 	return &entity.Company{
 		ID:          company.ID,
@@ -39,9 +35,7 @@ func CompanyModelToEntity(
 	}
 }
 
-func ToCompanyEntity(
-	companyModel *model.CompanyModel,
-) *entity.Company {
+func ToCompanyEntity(companyModel *model.CompanyModel) *entity.Company {
 
 	return &entity.Company{
 		ID:          companyModel.ID,

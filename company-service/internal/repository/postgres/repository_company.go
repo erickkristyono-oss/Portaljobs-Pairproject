@@ -17,19 +17,14 @@ type companyRepository struct {
 	db *gorm.DB
 }
 
-func NewCompanyRepository(
-	db *gorm.DB,
-) repository.CompanyRepository {
+func NewCompanyRepository(db *gorm.DB) repository.CompanyRepository {
 
 	return &companyRepository{
 		db: db,
 	}
 }
 
-func (r *companyRepository) Create(
-	ctx context.Context,
-	company *entity.Company,
-) error {
+func (r *companyRepository) Create(ctx context.Context, company *entity.Company) error {
 
 	companyModel := mapper.EntityToCompanyModel(company)
 
@@ -44,10 +39,7 @@ func (r *companyRepository) Create(
 	return nil
 }
 
-func (r *companyRepository) FindByID(
-	ctx context.Context,
-	id uint,
-) (*entity.Company, error) {
+func (r *companyRepository) FindByID(ctx context.Context, id uint) (*entity.Company, error) {
 
 	var companyModel model.CompanyModel
 
@@ -66,10 +58,7 @@ func (r *companyRepository) FindByID(
 	return mapper.CompanyModelToEntity(&companyModel), nil
 }
 
-func (r *companyRepository) FindByUserID(
-	ctx context.Context,
-	userID uint,
-) (*entity.Company, error) {
+func (r *companyRepository) FindByUserID(ctx context.Context, userID uint) (*entity.Company, error) {
 
 	var companyModel model.CompanyModel
 
@@ -89,10 +78,7 @@ func (r *companyRepository) FindByUserID(
 	return mapper.ToCompanyEntity(&companyModel), nil
 }
 
-func (r *companyRepository) Update(
-	ctx context.Context,
-	company *entity.Company,
-) error {
+func (r *companyRepository) Update(ctx context.Context, company *entity.Company) error {
 
 	result := r.db.WithContext(ctx).
 		Model(&model.CompanyModel{}).
