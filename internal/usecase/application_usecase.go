@@ -47,7 +47,7 @@ func (u *ApplicationUsecase) Apply(ctx context.Context, userID, jobID uint) (*do
 	if err := u.apps.Create(ctx, app); err != nil {
 		return nil, err
 	}
-	u.notify(ctx, userID, fmt.Sprintf("Lamaran kamu untuk lowongan #%d berhasil dikirim.", jobID))
+	u.notify(ctx, userID, fmt.Sprintf("Lamaran kamu untuk lowongan %q berhasil dikirim.", job.Judul))
 	return app, nil
 }
 
@@ -81,7 +81,13 @@ func (u *ApplicationUsecase) Decide(ctx context.Context, companyUserID, appID ui
 		return nil, err
 	}
 	app.Status = status
-	u.notify(ctx, app.UserID, fmt.Sprintf("Status lamaran #%d kamu sekarang: %s", appID, status))
+
+	// ambil judul lowongan untuk pesan yang lebih jelas (best-effort)
+	jobTitle := "lowongan"
+	if job, err := u.jobs.FindByID(ctx, app.JobID); err == nil {
+		jobTitle = job.Judul
+	}
+	u.notify(ctx, app.UserID, fmt.Sprintf("Status lamaran kamu untuk %q sekarang: %s", jobTitle, statusLabel(status)))
 	return app, nil
 }
 
@@ -112,5 +118,22 @@ func (u *ApplicationUsecase) notify(ctx context.Context, userID uint, message st
 	}
 	if err := u.notifier.Send(ctx, profile.PhoneNumber, message); err != nil {
 		log.Printf("[notify] gagal kirim WA ke user %d: %v", userID, err)
+	}
+}
+
+// statusLabel turns a raw status into a human-friendly Indonesian label for
+// notifications (the stored value stays in English).
+func statusLabel(status string) string {
+	switch status {
+	case domain.AppSubmitted:
+		return "Terkirim"
+	case domain.AppInterview:
+		return "Interview"
+	case domain.AppAccepted:
+		return "Diterima"
+	case domain.AppDeclined:
+		return "Ditolak"
+	default:
+		return status
 	}
 }

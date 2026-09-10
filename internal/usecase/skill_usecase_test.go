@@ -8,7 +8,7 @@ import (
 )
 
 // --- 1. MOCK: struct palsu yang memenuhi domain.SkillRepository ---
-// Data disimpan di memori, bukan database. Kita kendalikan sesuka hati.
+// Data disimpan di memori, bukan database
 type mockSkillRepo struct {
 	byID    map[uint]*domain.Skill
 	deleted []uint
