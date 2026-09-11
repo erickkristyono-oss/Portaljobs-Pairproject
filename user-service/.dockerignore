@@ -1,4 +1,4 @@
 .git
-Dockerfile
-tmp
+.env
 *.log
+tmp/

@@ -8,14 +8,14 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o admin-service ./cmd
+RUN go build -o gateway .
 
 FROM debian:bookworm-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/admin-service .
+COPY --from=builder /app/gateway .
 
-EXPOSE 8085
+EXPOSE 8079
 
-CMD ["./admin-service"]
+CMD ["./gateway"]

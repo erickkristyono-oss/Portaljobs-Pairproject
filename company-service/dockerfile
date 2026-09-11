@@ -1,4 +1,4 @@
-FROM golang:1.26-alpine AS builder
+FROM golang:1.27 AS builder
 
 WORKDIR /app
 
@@ -10,14 +10,12 @@ COPY . .
 
 RUN go build -o company-service ./cmd
 
-FROM alpine:3.22
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates
-
 COPY --from=builder /app/company-service .
 
-EXPOSE 8081
+EXPOSE 8082
 
 CMD ["./company-service"]

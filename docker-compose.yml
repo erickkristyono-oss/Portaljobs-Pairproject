@@ -1,0 +1,85 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: portaljobs-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: portaljobs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+  company-service:
+    build:
+      context: ./company-service
+    container_name: company-service
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+
+  job-service:
+    build:
+      context: ./job-service
+    container_name: job-service
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - company-service
+
+  application-service:
+    build:
+      context: ./application-service
+    container_name: application-service
+    restart: unless-stopped
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+      - user-service
+      - company-service
+      - job-service
+
+  admin-service:
+    build:
+      context: ./admin-service
+    container_name: admin-service
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres
+
+  gateway:
+    build:
+      context: ./gateway
+    container_name: gateway
+    restart: unless-stopped
+    ports:
+      - "8079:8079"
+    depends_on:
+      - user-service
+      - company-service
+      - job-service
+      - application-service
+      - admin-service
+
+volumes:
+  postgres_data:

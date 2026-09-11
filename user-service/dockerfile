@@ -1,4 +1,4 @@
-FROM golang:1.26 AS builder
+FROM golang:1.27 AS builder
 
 WORKDIR /app
 
@@ -8,17 +8,14 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -o user-service ./cmd
+RUN go build -o user-service ./cmd
 
-FROM alpine:3.22
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates
-
 COPY --from=builder /app/user-service .
 
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["./user-service"]
